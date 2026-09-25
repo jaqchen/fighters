@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
     void * map;
     const char * op;
     uint32_t mapSize;
-    int read_, ret, idx;
+    int readonly, ret, idx;
     unsigned long start;
     volatile uint32_t * memp;
 
@@ -109,10 +109,10 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    read_ = 0;
+    readonly = 0;
     op = argv[1];
     if (strcmp(op, "read") == 0)
-        read_ = 1;
+        readonly = 1;
     else if (strcmp(op, "write") != 0) {
         map_usage(argv[0]);
         return 2;
@@ -124,12 +124,12 @@ int main(int argc, char *argv[])
         return 3;
 
     /* get the starting size */
-    mapSize = 0;
-    ret = get_value(argv[3], &mapSize);
+    mapSize = 4096;
+    ret = readonly ? get_value(argv[3], &mapSize) : 0;
     if (ret < 0)
         return 4;
 
-    map = memMap_init(start, mapSize, read_);
+    map = memMap_init(start, mapSize, readonly);
     if (map == NULL) {
         fprintf(stderr, "Error, failed to initialize memory map: %s\n", strerror(errno));
         fflush(stderr);
@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
     }
 
     ret = 0;
-    if (read_ != 0) {
+    if (readonly != 0) {
         int rval;
         uint32_t jdx;
         for (idx = 2; idx < argc; idx += 2) {
