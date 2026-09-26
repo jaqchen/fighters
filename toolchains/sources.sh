@@ -7,16 +7,19 @@
 toolchain_build() {
 	local oldir="${PWD}"
 
-	cd "${FTOPDIR}/toolchain" || return 1
+	cd "${FTOPDIR}/toolchains" || return 1
 	if [ ! -e "${TAG_BUILT}" ] ; then
 		make EXTC_ROOT="${TOOLCHAIN_DIR}" FTC_PREFIX="${FTC_PREFIX}" \
 			FTC_FLAGS="${FTC_CFLAGS}" all
 		if [ $? -ne 0 ] ; then
 			echo "Error, failed to generated toolchain wrapper." 1>&2
+			cd "${oldir}"
 			return 2
 		fi
 		touch "${TAG_BUILT}"
 	fi
+
+	cd "${oldir}"
 	return 0
 }
 

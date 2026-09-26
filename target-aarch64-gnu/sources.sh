@@ -1,3 +1,3 @@
 #!/bin/bash
 
-source "${FTOPDIR}/toolchain/sources.sh"
+source "${FTOPDIR}/toolchains/sources.sh"

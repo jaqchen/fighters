@@ -17,7 +17,7 @@ fi
 echo -e "\n\n\t.globl $2"
 echo -e "\t.hidden $2"
 echo -e "\t.section .rodata"
-echo -e "\t.balign 4"
+echo -e "\t.balign 8"
 echo    "$2:"
 echo -e "\t.incbin \"$1\"\n"
 exit 0
