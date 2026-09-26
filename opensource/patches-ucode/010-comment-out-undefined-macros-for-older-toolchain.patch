@@ -1,0 +1,117 @@
+diff --git a/lib/socket.c b/lib/socket.c
+index 980c0964..26f6573a 100644
+--- a/lib/socket.c
++++ b/lib/socket.c
+@@ -124,6 +124,8 @@
+ #define ok_return(expr) do { set_error(0, NULL); return (expr); } while(0)
+ #define err_return(err, ...) do { set_error(err, __VA_ARGS__); return NULL; } while(0)
+ 
++#define FTC_KEEP_NEW_MACROS 0
++
+ static struct {
+ 	int code;
+ 	char *msg;
+@@ -1606,7 +1608,9 @@ static sockopt_t sockopts[] = {
+     { SOL_SOCKET, SO_DETACH_BPF, SV_VOID },
+     { SOL_SOCKET, SO_DOMAIN, SV_INT_RO },
+     { SOL_SOCKET, SO_INCOMING_CPU, SV_INT },
++#if FTC_KEEP_NEW_MACROS
+     { SOL_SOCKET, SO_INCOMING_NAPI_ID, SV_INT_RO },
++#endif
+     { SOL_SOCKET, SO_LOCK_FILTER, SV_INT },
+     { SOL_SOCKET, SO_MARK, SV_INT },
+     { SOL_SOCKET, SO_PASSCRED, SV_BOOL },
+@@ -1683,7 +1687,9 @@ static sockopt_t sockopts[] = {
+ 	{ IPPROTO_IPV6, IPV6_MINHOPCOUNT, SV_INT },
+ 	{ IPPROTO_IPV6, IPV6_MTU_DISCOVER, SV_INT },
+ 	{ IPPROTO_IPV6, IPV6_MTU, SV_INT },
++#if FTC_KEEP_NEW_MACROS
+ 	{ IPPROTO_IPV6, IPV6_MULTICAST_ALL, SV_BOOL },
++#endif
+ 	{ IPPROTO_IPV6, IPV6_PKTINFO, &st_in6_pktinfo },
+ 	{ IPPROTO_IPV6, IPV6_RECVDSTOPTS, SV_BOOL },
+ 	{ IPPROTO_IPV6, IPV6_RECVERR, SV_BOOL },
+@@ -1694,7 +1700,9 @@ static sockopt_t sockopts[] = {
+ 	{ IPPROTO_IPV6, IPV6_RECVPATHMTU, SV_BOOL },
+ 	{ IPPROTO_IPV6, IPV6_RECVPKTINFO, SV_BOOL },
+ 	{ IPPROTO_IPV6, IPV6_RECVRTHDR, SV_BOOL },
++#if FTC_KEEP_NEW_MACROS
+ 	{ IPPROTO_IPV6, IPV6_ROUTER_ALERT_ISOLATE, SV_BOOL },
++#endif
+ 	{ IPPROTO_IPV6, IPV6_ROUTER_ALERT, SV_BOOL },
+ 	{ IPPROTO_IPV6, IPV6_RTHDR, SV_STRING },
+ 	{ IPPROTO_IPV6, IPV6_RTHDRDSTOPTS, SV_STRING },
+@@ -1718,8 +1726,10 @@ static sockopt_t sockopts[] = {
+     { IPPROTO_TCP, TCP_SYNCNT, SV_INT },
+     { IPPROTO_TCP, TCP_USER_TIMEOUT, SV_INT },
+     { IPPROTO_TCP, TCP_WINDOW_CLAMP, SV_INT },
++#if FTC_KEEP_NEW_MACROS
+     { IPPROTO_TCP, TCP_FASTOPEN_CONNECT, SV_INT },
+ #endif
++#endif
+ 
+ #if defined(__linux__)
+     { IPPROTO_UDP, UDP_CORK, SV_BOOL },
+@@ -1766,7 +1776,9 @@ static cmsgtype_t cmsgtypes[] = {
+ 	{ IPPROTO_IP, IP_CHECKSUM, CV_UINT },
+ 	{ IPPROTO_IP, IP_ORIGDSTADDR, CV_SOCKADDR },
+ 	{ IPPROTO_IP, IP_RECVERR, &st_ip_recv_error },
++#if FTC_KEEP_NEW_MACROS
+ 	{ IPPROTO_IP, IP_RECVFRAGSIZE, CV_INT },
++#endif
+ #endif
+ 
+ 	{ IPPROTO_IPV6, IPV6_TCLASS, CV_INT },
+@@ -1781,10 +1793,11 @@ static cmsgtype_t cmsgtypes[] = {
+ 	{ IPPROTO_IPV6, IPV6_RECVERR, &st_ip_recv_error },
+ 	{ IPPROTO_IPV6, IPV6_RECVFRAGSIZE, CV_INT },
+ 	{ IPPROTO_IPV6, IPV6_RTHDR, CV_STRING },
+-
++#if FTC_KEEP_NEW_MACROS
+ 	{ IPPROTO_TCP, TCP_CM_INQ, CV_INT },
+ 	{ IPPROTO_UDP, UDP_GRO, CV_INT },
+ #endif
++#endif
+ };
+ 
+ 
+@@ -5178,7 +5191,9 @@ void uc_module_init(uc_vm_t *vm, uc_value_t *scope)
+ 	ADD_CONST(IPV6_MINHOPCOUNT);
+ 	ADD_CONST(IPV6_MTU_DISCOVER);
+ 	ADD_CONST(IPV6_MTU);
++#if FTC_KEEP_NEW_MACROS
+ 	ADD_CONST(IPV6_MULTICAST_ALL);
++#endif
+ 	ADD_CONST(IPV6_PKTINFO);
+ 	ADD_CONST(IPV6_RECVDSTOPTS);
+ 	ADD_CONST(IPV6_RECVERR);
+@@ -5189,7 +5204,9 @@ void uc_module_init(uc_vm_t *vm, uc_value_t *scope)
+ 	ADD_CONST(IPV6_RECVPATHMTU);
+ 	ADD_CONST(IPV6_RECVPKTINFO);
+ 	ADD_CONST(IPV6_RECVRTHDR);
++#if FTC_KEEP_NEW_MACROS
+ 	ADD_CONST(IPV6_ROUTER_ALERT_ISOLATE);
++#endif
+ 	ADD_CONST(IPV6_ROUTER_ALERT);
+ 	ADD_CONST(IPV6_RTHDR);
+ 	ADD_CONST(IPV6_RTHDRDSTOPTS);
+@@ -5283,7 +5300,9 @@ void uc_module_init(uc_vm_t *vm, uc_value_t *scope)
+ 	ADD_CONST(SO_DETACH_FILTER);
+ 	ADD_CONST(SO_DOMAIN);
+ 	ADD_CONST(SO_INCOMING_CPU);
++#if FTC_KEEP_NEW_MACROS
+ 	ADD_CONST(SO_INCOMING_NAPI_ID);
++#endif
+ 	ADD_CONST(SO_LOCK_FILTER);
+ 	ADD_CONST(SO_MARK);
+ 	ADD_CONST(SO_PASSCRED);
+@@ -5343,7 +5362,9 @@ void uc_module_init(uc_vm_t *vm, uc_value_t *scope)
+ 	ADD_CONST(TCP_CONGESTION);
+ 	ADD_CONST(TCP_CORK);
+ 	ADD_CONST(TCP_DEFER_ACCEPT);
++#if FTC_KEEP_NEW_MACROS
+ 	ADD_CONST(TCP_FASTOPEN_CONNECT);
++#endif
+ 	ADD_CONST(TCP_INFO);
+ 	ADD_CONST(TCP_KEEPIDLE);
+ 	ADD_CONST(TCP_LINGER2);

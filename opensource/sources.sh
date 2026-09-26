@@ -182,6 +182,32 @@ libmd_build() {
 	return 0
 }
 
+ucode_config() {
+	apply_patches ../patches-ucode
+	[ $? -ne 0 ] && return 1
+
+	PKG_CONFIG_PATH=${FSTAGING_DIR}${FTI_PREFIX}/lib/pkgconfig \
+	cmake -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX="${FTI_PREFIX}" \
+		-DCMAKE_C_COMPILER=${FTC_CC} -DLINUX=ON -DCMAKE_AR="$(which ${FTC_AR})" \
+		-DCMAKE_C_COMPILER_RANLIB=${FTC_RANLIB} \
+		-Djson=${FSTAGING_DIR}${FTI_PREFIX}/lib/libjson-c.so \
+		-Duci_include_dir=${FSTAGING_DIR}${FTI_PREFIX}/include \
+		-Dnl_include_dir=${FSTAGING_DIR}${FTI_PREFIX}/include/libnl-tiny \
+		-Duloop_include_dir=${FSTAGING_DIR}${FTI_PREFIX}/include \
+		-Dubus_include_dir=${FSTAGING_DIR}${FTI_PREFIX}/include \
+		-Dulog_include_dir=${FSTAGING_DIR}${FTI_PREFIX}/include \
+		-Dlibmd=${FSTAGING_DIR}${FTI_PREFIX}/lib/libmd.so \
+		-Dlibuci=${FSTAGING_DIR}${FTI_PREFIX}/lib/libuci.so \
+		-Dlibubox=${FSTAGING_DIR}${FTI_PREFIX}/lib/libubox.so \
+		-Dlibubus=${FSTAGING_DIR}${FTI_PREFIX}/lib/libubus.so \
+		-Dlibnl_tiny=${FSTAGING_DIR}${FTI_PREFIX}/lib/libnl-tiny.so \
+		-Dlibblobmsg_json=${FSTAGING_DIR}${FTI_PREFIX}/lib/libblobmsg_json.so \
+		-DCMAKE_EXE_LINKER_FLAGS="${FTC_LDFLAGS}" \
+		-DCMAKE_SHARED_LINKER_FLAGS="${FTC_LDFLAGS}" \
+		-DCMAKE_MODULE_LINKER_FLAGS="${FTC_LDFLAGS}" .
+	return $?
+}
+
 register_source "lua-5.1.5.tar.gz" \
 	lua51_config lua51_compile lua51_clean
 
@@ -208,3 +234,6 @@ register_source "iw-6.17.tar.xz" \
 
 register_source 'libmd-1.2.0.tar.xz' \
 	libmd_config libmd_build opensource_clean
+
+register_source "opensource/ucode" \
+	ucode_config opensource_build opensource_clean
