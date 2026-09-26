@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-declare -r FTC_HOST=arm-linux-gnueabihf
+declare -r FTC_HOST=aarch64-linux-gnu
 declare -r FTC_PREFIX="${FTC_HOST}-"
 declare -r FTC_CC="${FTC_PREFIX}gcc"
 declare -r FTC_CXX="${FTC_PREFIX}g++"
@@ -23,6 +23,6 @@ declare -r FTC_AR="${FTC_PREFIX}ar"
 declare -r FTC_RANLIB="${FTC_PREFIX}ranlib"
 declare -r FTC_LD="${FTC_PREFIX}ld"
 
-declare -r FTC_FLAGS="-march=armv7-a -mfloat-abi=hard -mfpu=neon-vfpv4 -Wall -fPIC -O2 -ggdb -D_GNU_SOURCE"
+declare -r FTC_FLAGS="-Wall -fPIC -O2 -ggdb -D_GNU_SOURCE -fno-omit-frame-pointer"
 declare -r FTC_CFLAGS="${FTC_FLAGS}"
 declare -r FTC_CXXFLAGS="${FTC_FLAGS}"
