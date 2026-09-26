@@ -24,6 +24,10 @@ local function fetch_pkgs()
 	npkg = npkg + 1
 	pkg_list[npkg] = { url = "https://www.kernel.org/pub/software/network/iw/iw-6.17.tar.xz",
 		sha256sum = "7d182e498289ab39b257da6780d562e415377107f50358ee5b55b8cfe40b1e33", }
+
+	npkg = npkg + 1
+	pkg_list[npkg] = { url = "https://archive.hadrons.org/software/libmd/libmd-1.2.0.tar.xz",
+		sha256sum = "ac15ffb8430502fbaccdec66c5a82ee0eab0b0f36220df56710feadfeb13d0a0", }
 end
 
 local function download_init(arg0)

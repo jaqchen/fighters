@@ -165,6 +165,23 @@ iw_utils_build() {
 	return $?
 }
 
+libmd_config() {
+	./configure --host=${FTC_HOST} --prefix=${FTI_PREFIX} CC=${FTC_CC} \
+		LDFLAGS="${FTC_LDFLAGS}" --enable-static=yes --enable-shared=yes
+	return $?
+}
+
+libmd_build() {
+	make V=1 -j4
+	[ $? -ne 0 ] && return 1
+
+	make V=1 DESTDIR=${FSTAGING_DIR} -j1 install
+	[ $? -ne 0 ] && return 2
+
+	cd "${FSTAGING_DIR}${FTI_PREFIX}/lib" && rm -f -v *.a
+	return 0
+}
+
 register_source "lua-5.1.5.tar.gz" \
 	lua51_config lua51_compile lua51_clean
 
@@ -188,3 +205,6 @@ register_source "opensource/jsonfilter" \
 
 register_source "iw-6.17.tar.xz" \
 	iw_utils_config iw_utils_build opensource_clean
+
+register_source 'libmd-1.2.0.tar.xz' \
+	libmd_config libmd_build opensource_clean
