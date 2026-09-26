@@ -26,3 +26,6 @@ declare -r FTC_LD="${FTC_PREFIX}ld"
 declare -r FTC_FLAGS="-Wall -fPIC -O2 -ggdb -D_GNU_SOURCE -fno-omit-frame-pointer"
 declare -r FTC_CFLAGS="${FTC_FLAGS}"
 declare -r FTC_CXXFLAGS="${FTC_FLAGS}"
+
+declare -r TOOLCHAIN_DIR=/opt/gcc-linaro-7.4.1-2019.02-x86_64_aarch64-linux-gnu
+export PATH=${FTOPDIR}/toolchain/bin:/usr/local/bin:/usr/bin:/usr/sbin:/bin:/sbin

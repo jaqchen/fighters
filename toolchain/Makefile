@@ -12,8 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include $(FTARGET_DIR)/target.mk
-
+MAKEFLAGS   += -r -R
 HOSTCC      := gcc
 HOST_CFLAGS := -Wall -O2 -fPIC -D_GNU_SOURCE
 
