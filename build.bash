@@ -31,7 +31,7 @@ declare -i endIndex=0
 
 # declare FTOPDIR environment variable
 get_topdir() {
-    local topdir=`realpath -s "$1"`
+    local topdir=$(realpath -s "$1")
     [ -n "${topdir}" ] && topdir="${topdir%/*}"
     if [ -z "${topdir}" ] ; then
         echo "Error, failed to get parent directory." 1>&2
@@ -192,7 +192,7 @@ fetch_source_dir() {
         echo "Error, cannot determine directory for '${srcm}'." 1>&2
         return 2
     fi
-    retval="${sdir}"
+    retval="opensource/${sdir}"
     return 0
 }
 
@@ -262,7 +262,7 @@ build_source() {
         if [ ! -d "${sbdir}" ] ; then
             # extract the source tarball
             echo "Extracting from \"${srcn}\"..."
-            tar -axf "${tarball}" ; retw=$?
+            tar -axf "${tarball}" -C opensource ; retw=$?
             if [ $retw -ne 0 ] ; then
                 echo "Error, failed to extract '${srcn}'." 1>&2
                 return 5
