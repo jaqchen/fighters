@@ -93,6 +93,27 @@ uci_config() {
 	return $?
 }
 
+ubus_config() {
+	apply_patches ../patches-ubus
+	[ $? -ne 0 ] && return 1
+
+	PKG_CONFIG_PATH=${FSTAGING_DIR}${FTI_PREFIX}/lib/pkgconfig \
+	cmake -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX="${FTI_PREFIX}" \
+		-DCMAKE_C_COMPILER=${FTC_CC} -DCMAKE_AR="$(which ${FTC_AR})" \
+		-DCMAKE_C_COMPILER_RANLIB=${FTC_RANLIB} \
+		-DBUILD_LUA=ON -DBUILD_EXAMPLES=OFF -DBUILD_STATIC=OFF \
+		-DLUA_CFLAGS="-I${FSTAGING_DIR}${FTI_PREFIX}/include" \
+		-DLUAPATH="${FTI_PREFIX}/lib/lua" \
+		-Dubox_library=${FSTAGING_DIR}${FTI_PREFIX}/lib/libubox.so \
+		-Dblob_library=${FSTAGING_DIR}${FTI_PREFIX}/lib/libblobmsg_json.so \
+		-Djson=${FSTAGING_DIR}${FTI_PREFIX}/lib/libjson-c.so \
+		-Dubox_include_dir="${FSTAGING_DIR}${FTI_PREFIX}/include" \
+		-DCMAKE_EXE_LINKER_FLAGS="${FTC_LDFLAGS}" \
+		-DCMAKE_SHARED_LINKER_FLAGS="${FTC_LDFLAGS}" \
+		-DCMAKE_MODULE_LINKER_FLAGS="${FTC_LDFLAGS}" .
+	return $?
+}
+
 register_source "lua-5.1.5.tar.gz" \
 	lua51_config lua51_compile lua51_clean
 
@@ -104,3 +125,6 @@ register_source "opensource/libubox" \
 
 register_source "opensource/uci" \
 	uci_config opensource_build opensource_clean
+
+register_source "opensource/ubus" \
+	ubus_config opensource_build opensource_clean

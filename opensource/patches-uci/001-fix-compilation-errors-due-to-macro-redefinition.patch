@@ -9,7 +9,7 @@ index 5437fc1..71f4e3d 100644
 -
 -#define _GNU_SOURCE
 +#ifndef _GNU_SOURCE
-+  #define _GNU_SOURCE
++  #define _GNU_SOURCE 1
 +#endif
  #include <sys/types.h>
  #include <sys/stat.h>
@@ -24,7 +24,7 @@ index 6840cfc..3ea42d9 100644
  
 -#define _GNU_SOURCE
 +#ifndef _GNU_SOURCE
-+  #define _GNU_SOURCE
++  #define _GNU_SOURCE 1
 +#endif
  #include <sys/types.h>
  #include <sys/stat.h>
@@ -40,7 +40,7 @@ index d854549..7e160eb 100644
 -
 -#define _GNU_SOURCE
 +#ifndef _GNU_SOURCE
-+  #define _GNU_SOURCE
++  #define _GNU_SOURCE 1
 +#endif
  #include <sys/types.h>
  #include <stdbool.h>
@@ -55,7 +55,7 @@ index 61e42cd..588d2f1 100644
   */
 -#define _GNU_SOURCE
 +#ifndef _GNU_SOURCE
-+  #define _GNU_SOURCE
++  #define _GNU_SOURCE 1
 +#endif
  #include <sys/types.h>
  #include <sys/stat.h>

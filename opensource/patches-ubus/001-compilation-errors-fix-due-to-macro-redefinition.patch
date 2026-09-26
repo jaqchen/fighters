@@ -1,0 +1,49 @@
+diff --git a/libubus-io.c b/libubus-io.c
+index 4d5f2e1..3c3e218 100644
+--- a/libubus-io.c
++++ b/libubus-io.c
+@@ -10,8 +10,9 @@
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  */
+-
+-#define _GNU_SOURCE
++#ifndef _GNU_SOURCE
++  #define _GNU_SOURCE 1
++#endif
+ #include <sys/types.h>
+ #include <sys/uio.h>
+ #include <sys/socket.h>
+diff --git a/ubusd_acl.c b/ubusd_acl.c
+index 438fa50..60092a3 100644
+--- a/ubusd_acl.c
++++ b/ubusd_acl.c
+@@ -11,8 +11,9 @@
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  */
+-
+-#define _GNU_SOURCE
++#ifndef _GNU_SOURCE
++  #define _GNU_SOURCE 1
++#endif
+ #include <sys/socket.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+diff --git a/ubusd_main.c b/ubusd_main.c
+index 14d3be2..13518a4 100644
+--- a/ubusd_main.c
++++ b/ubusd_main.c
+@@ -3,9 +3,9 @@
+  *
+  * SPDX-License-Identifier: LGPL-2.1-only
+  */
+-
+-#define _GNU_SOURCE
+-
++#ifndef _GNU_SOURCE
++  #define _GNU_SOURCE 1
++#endif
+ #include <sys/socket.h>
+ #include <sys/stat.h>
+ #include <sys/types.h>

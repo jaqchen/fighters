@@ -20,6 +20,10 @@ local function fetch_repos()
 	npkg = npkg + 1
 	repo_list[npkg] = { url = "https://git.openwrt.org/project/uci.git",
 		dirname = "uci", commit = "66127cd76c5d0bd46d5a90302cc6110f53a4e2f8", }
+
+	npkg = npkg + 1
+	repo_list[npkg] = { url = "https://git.openwrt.org/project/ubus.git",
+		dirname = "ubus", commit = "24864e7840b3a02a9ef76284a373f6b2f00b8a9b", }
 end
 
 local function clone_init(arg0)
@@ -98,12 +102,12 @@ local function download_git(url, gdir, cid)
 	if get_commit_id(gdir) ~= cid then
 		io.stderr:write(gfmt("Error, failed to download: %s\n", url))
 		io.stderr:flush()
-		return true
+		return false
 	end
 
 	io.stdout:write(gfmt("INFO: repository cloned from '%s' into '%s'\n", url, gdir))
 	io.stdout:flush()
-	return false
+	return true
 end
 
 local function mainfunc()
