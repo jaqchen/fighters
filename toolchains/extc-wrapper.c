@@ -49,6 +49,9 @@ struct wrapper {
 #ifndef EXTC_ROOT
 #error EXTC_ROOT not defined
 #endif
+#ifndef EXTI_PREFIX
+#error EXTI_PREFIX not defined
+#endif
 
 #define EXTC_WRAPPER "Wrapper: "
 #define EXTC_NOINL __attribute__((noinline))
@@ -326,7 +329,7 @@ void wrapper_combine(struct wrapper * pw)
 		strcpy(argbuf, "-idirafter");
 		wrapper_addarg(pw, argbuf, 1);
 		newarg = NULL;
-		ret = asprintf(&newarg, "%s/usr/include", pw->staging);
+		ret = asprintf(&newarg, "%s" EXTI_PREFIX "/include", pw->staging);
 		if (ret <= 0)
 			wrapper_nomem(__LINE__);
 		wrapper_addarg(pw, newarg, 0);
@@ -341,13 +344,13 @@ linkopts:
 	if (pw->staging != NULL &&
 		(pw->found_l != 0 || pw->found_L != 0)) {
 		newarg = NULL;
-		ret = asprintf(&newarg, "-L%s/usr/lib", pw->staging);
+		ret = asprintf(&newarg, "-L%s" EXTI_PREFIX "/lib", pw->staging);
 		if (ret <= 0)
 			wrapper_nomem(__LINE__);
 		wrapper_addarg(pw, newarg, 0);
 
 		newarg = NULL;
-		ret = asprintf(&newarg, "-Wl,-rpath-link=%s/usr/lib", pw->staging);
+		ret = asprintf(&newarg, "-Wl,-rpath-link=%s" EXTI_PREFIX "/lib", pw->staging);
 		if (ret <= 0)
 			wrapper_nomem(__LINE__);
 		wrapper_addarg(pw, newarg, 0);

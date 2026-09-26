@@ -26,6 +26,11 @@ ifeq ("$(FTC_PREFIX)","")
 $(error FTC_PREFIX not defined)
 endif
 
+# check installation prefix
+ifeq ("$(FTI_PREFIX)","")
+$(error FTI_PREFIX not defined)
+endif
+
 # external toolchain compilers
 EXTC_CLS    := c++ cpp g++ gcc
 EXTC_BIN    := addr2line ar as c++filt dwp \
@@ -43,9 +48,8 @@ TARGETS     := extc-wrapper extc-invoker \
 all: $(TARGETS)
 
 % : %.c
-	$(HOSTCC) $(HOST_CFLAGS) '-DEXTC_ROOT="$(EXTC_ROOT)"' \
-		$(if $(FTC_FLAGS),'-DEXTC_CFLAGS="$(FTC_FLAGS)"') \
-		'-DEXTC_PREFIX="$(FTC_PREFIX)"' -o $@ $^
+	$(HOSTCC) $(HOST_CFLAGS) '-DEXTC_ROOT="$(EXTC_ROOT)"' $(if $(FTC_FLAGS),'-DEXTC_CFLAGS="$(FTC_FLAGS)"') \
+		'-DEXTI_PREFIX="$(FTI_PREFIX)"' -o $@ $^
 define external_toolchain
 .PHONY: bin/$(FTC_PREFIX)$(1)
 bin/$(FTC_PREFIX)$(1): $(2)
@@ -56,4 +60,4 @@ $(foreach tcbin,$(EXTC_CLS),$(eval $(call external_toolchain,$(tcbin),extc-wrapp
 $(foreach tcbin,$(EXTC_BIN),$(eval $(call external_toolchain,$(tcbin),extc-invoker)))
 
 clean:
-	rm -rf -v .tag-built bin/*-* $(TARGETS)
+	rm -rf -v .tag-built bin/*-*-* $(TARGETS)

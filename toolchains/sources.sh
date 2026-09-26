@@ -14,7 +14,7 @@ toolchains_build() {
 	cd "${FTOPDIR}/toolchains" || return 2
 	if [ ! -e "${TAG_BUILT}" ] ; then
 		make "EXTC_ROOT=${TOOLCHAIN_DIR}" "FTC_PREFIX=${FTC_PREFIX}" \
-			"FTC_FLAGS=${FTC_FLAGS}" all
+			"FTI_PREFIX=${FTI_PREFIX}" "FTC_FLAGS=${FTC_FLAGS}" all
 		if [ $? -ne 0 ] ; then
 			echo "Error, failed to generated toolchain wrapper." 1>&2
 			cd "${oldir}"
