@@ -19,6 +19,7 @@ local function fetch_pkgs()
 
 	npkg = npkg + 1
 	pkg_list[npkg] = { url = "https://s3.amazonaws.com/json-c_releases/releases/json-c-0.18-nodoc.tar.gz",
+		name = "json-c-0.18.tar.gz",
 		sha256sum = "602cdefc1d2aab8318fc0814b7ce7d59e72514d4276ca3eff92f35f86cf1c160", }
 end
 

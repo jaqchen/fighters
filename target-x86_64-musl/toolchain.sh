@@ -29,5 +29,6 @@ declare -r FTC_CXXFLAGS="${FTC_FLAGS}"
 
 # installation prefix directory
 declare -r FTI_PREFIX=/opt/wrtnet
+declare -r FTC_LDFLAGS="-Wl,-rpath=${FTI_PREFIX}/lib"
 declare -r TOOLCHAIN_DIR=/opt/x86-64--musl--stable-2023.11-1
 # export PATH=${FTOPDIR}/toolchains/bin:/usr/local/bin:/usr/bin:/usr/sbin:/bin:/sbin
