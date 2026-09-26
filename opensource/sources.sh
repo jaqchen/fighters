@@ -227,6 +227,36 @@ udebug_config() {
 	return $?
 }
 
+openssl_config() {
+	local SSL_TARGET
+	if [[ ${FTC_CC} =~ ^arm- ]] ; then
+		SSL_TARGET=linux-arm-openwrt
+	elif [[ ${FTC_CC} =~ ^aarch64- ]] ; then
+		SSL_TARGET=linux-aarch64-openwrt
+	elif [[ ${FTC_CC} =~ ^x86_64- ]] ; then
+		SSL_TARGET=linux-x86_64-openwrt
+	else
+		echo "Error, unsupported toolchain for openssl: ${FTC_CC}"
+		return 1
+	fi
+
+	apply_patches ../patches-openssl
+	[ $? -ne 0 ] && return 2
+
+	CFLAGS="${FTC_CFLAGS}" LDFLAGS="${FTC_LDFLAGS}" \
+	./Configure "${SSL_TARGET}" --prefix=${FTI_PREFIX} --libdir=lib --openssldir="${FTI_PREFIX}/etc/ssl" \
+		--cross-compile-prefix=${FTC_PREFIX} shared no-tests no-comp
+	return $?
+}
+
+openssl_build() {
+	make CC=${FTC_CC} -j4 all
+	[ $? -ne 0 ] && return 1
+
+	make CC=${FTC_CC} -j1 DESTDIR="${FSTAGING_DIR}" install_sw install_ssldirs
+	return $?
+}
+
 register_source "lua-5.1.5.tar.gz" \
 	lua51_config lua51_compile lua51_clean
 
@@ -259,3 +289,6 @@ register_source "opensource/ucode" \
 
 register_source "opensource/udebug" \
 	udebug_config opensource_build opensource_clean
+
+register_source 'openssl-3.5.7.tar.gz' \
+	openssl_config openssl_build opensource_clean

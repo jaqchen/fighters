@@ -28,6 +28,10 @@ local function fetch_pkgs()
 	npkg = npkg + 1
 	pkg_list[npkg] = { url = "https://archive.hadrons.org/software/libmd/libmd-1.2.0.tar.xz",
 		sha256sum = "ac15ffb8430502fbaccdec66c5a82ee0eab0b0f36220df56710feadfeb13d0a0", }
+
+	npkg = npkg + 1
+	pkg_list[npkg] = { url = "https://github.com/openssl/openssl/releases/download/openssl-3.5.7/openssl-3.5.7.tar.gz",
+		sha256sum = "a8c0d28a529ca480f9f36cf5792e2cd21984552a3c8e4aa11a24aa31aeac98e8", }
 end
 
 local function download_init(arg0)
