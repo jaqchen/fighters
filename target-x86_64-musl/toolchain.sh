@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-declare -r FTC_HOST=x86_64-linux-gnu
+declare -r FTC_HOST=x86_64-buildroot-linux-musl
 declare -r FTC_PREFIX="${FTC_HOST}-"
 declare -r FTC_CC="${FTC_PREFIX}gcc"
 declare -r FTC_CXX="${FTC_PREFIX}g++"
@@ -26,3 +26,6 @@ declare -r FTC_LD="${FTC_PREFIX}ld"
 declare -r FTC_FLAGS="-Wall -fPIC -O2 -ggdb -D_GNU_SOURCE -fno-omit-frame-pointer"
 declare -r FTC_CFLAGS="${FTC_FLAGS}"
 declare -r FTC_CXXFLAGS="${FTC_FLAGS}"
+
+declare -r TOOLCHAIN_DIR=/opt/x86-64--musl--stable-2023.11-1
+export PATH=${FTOPDIR}/toolchains/bin:/usr/local/bin:/usr/bin:/usr/sbin:/bin:/sbin

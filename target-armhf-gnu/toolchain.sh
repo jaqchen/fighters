@@ -26,3 +26,6 @@ declare -r FTC_LD="${FTC_PREFIX}ld"
 declare -r FTC_FLAGS="-march=armv7-a -mfloat-abi=hard -mfpu=neon-vfpv4 -Wall -fPIC -O2 -ggdb -D_GNU_SOURCE -fno-omit-frame-pointer"
 declare -r FTC_CFLAGS="${FTC_FLAGS}"
 declare -r FTC_CXXFLAGS="${FTC_FLAGS}"
+
+declare -r TOOLCHAIN_DIR=/opt/gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabi
+export PATH=${FTOPDIR}/toolchains/bin:/usr/local/bin:/usr/bin:/usr/sbin:/bin:/sbin
