@@ -28,6 +28,10 @@ local function fetch_repos()
 	npkg = npkg + 1
 	repo_list[npkg] = { url = "https://git.openwrt.org/project/libnl-tiny.git",
 		dirname = "libnl-tiny", commit = "40493a655d8caa2ccf5206dde1e733abe2920432", }
+
+	npkg = npkg + 1
+	repo_list[npkg] = { url = "https://git.openwrt.org/project/jsonpath.git",
+		dirname = "jsonfilter", commit = "b9034210bd331749673416c6bf389cccd4e23610", }
 end
 
 local function clone_init(arg0)

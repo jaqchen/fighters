@@ -127,6 +127,28 @@ libnl_tiny_config() {
 	return $?
 }
 
+jsonfilter_config() {
+	cmake -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX="${FTI_PREFIX}" \
+		-DCMAKE_C_COMPILER=${FTC_CC} -DCMAKE_AR="$(which ${FTC_AR})" \
+		-DCMAKE_C_COMPILER_RANLIB=${FTC_RANLIB} \
+		-Djson=${FSTAGING_DIR}${FTI_PREFIX}/lib/libjson-c.so \
+		-Dubox_include_dir=${FSTAGING_DIR}${FTI_PREFIX}/include \
+		-DCMAKE_EXE_LINKER_FLAGS="${FTC_LDFLAGS}" \
+		-DCMAKE_SHARED_LINKER_FLAGS="${FTC_LDFLAGS}" \
+		-DCMAKE_MODULE_LINKER_FLAGS="${FTC_LDFLAGS}" .
+	return $?
+}
+
+jsonfilter_build() {
+	opensource_build
+	[ $? -ne 0 ] && return 1
+	cd "${FSTAGING_DIR}${FTI_PREFIX}/bin" && \
+		[ ! -L jsonpath ] && \
+		mv -v -f jsonpath jsonfilter && \
+		ln -sv jsonfilter jsonpath
+	return $?
+}
+
 register_source "lua-5.1.5.tar.gz" \
 	lua51_config lua51_compile lua51_clean
 
@@ -144,3 +166,6 @@ register_source "opensource/ubus" \
 
 register_source "opensource/libnl-tiny" \
 	libnl_tiny_config opensource_build opensource_clean
+
+register_source "opensource/jsonfilter" \
+	jsonfilter_config jsonfilter_build opensource_clean
