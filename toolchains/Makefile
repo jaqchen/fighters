@@ -22,7 +22,7 @@ $(error invalid EXTC_ROOT defined: $(EXTC_ROOT))
 endif
 
 # check external toolchain prefix
-ifeq ($(FTC_PREFIX),)
+ifeq ("$(FTC_PREFIX)","")
 $(error FTC_PREFIX not defined)
 endif
 
@@ -49,11 +49,11 @@ all: $(TARGETS)
 define external_toolchain
 .PHONY: bin/$(FTC_PREFIX)$(1)
 bin/$(FTC_PREFIX)$(1): $(2)
-	[ -x "$(EXTC_ROOT)/bin/$(FTC_PREFIX)$(1)" ] && [ ! -e $$@ ] && ln -v $$< $$@ ; exit 0
+	@[ -x "$(EXTC_ROOT)/bin/$(FTC_PREFIX)$(1)" ] && [ ! -e $$@ ] && ln -v $$< $$@ ; exit 0
 endef
 
 $(foreach tcbin,$(EXTC_CLS),$(eval $(call external_toolchain,$(tcbin),extc-wrapper)))
 $(foreach tcbin,$(EXTC_BIN),$(eval $(call external_toolchain,$(tcbin),extc-invoker)))
 
 clean:
-	rm -rf bin/*-* $(TARGETS)
+	rm -rf -v .tag-built bin/*-* $(TARGETS)

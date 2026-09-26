@@ -4,17 +4,21 @@
 # Simple Shell Script to compile toolchain wrappers
 # 2026/09/26
 
-toolchain_build() {
-	local oldir="${PWD}"
+toolchains_build() {
+	if [ -z "${TOOLCHAIN_DIR}" ] ; then
+		echo "Error, \`TOOLCHAIN_DIR not defined."
+		return 1
+	fi
 
-	cd "${FTOPDIR}/toolchains" || return 1
+	local oldir="${PWD}"
+	cd "${FTOPDIR}/toolchains" || return 2
 	if [ ! -e "${TAG_BUILT}" ] ; then
-		make EXTC_ROOT="${TOOLCHAIN_DIR}" FTC_PREFIX="${FTC_PREFIX}" \
-			FTC_FLAGS="${FTC_CFLAGS}" all
+		make "EXTC_ROOT=${TOOLCHAIN_DIR}" "FTC_PREFIX=${FTC_PREFIX}" \
+			"FTC_FLAGS=${FTC_FLAGS}" all
 		if [ $? -ne 0 ] ; then
 			echo "Error, failed to generated toolchain wrapper." 1>&2
 			cd "${oldir}"
-			return 2
+			return 3
 		fi
 		touch "${TAG_BUILT}"
 	fi
@@ -24,4 +28,4 @@ toolchain_build() {
 }
 
 # invoke the toolchain wrapper build unconditionally
-toolchain_build
+toolchains_build
