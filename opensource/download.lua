@@ -11,9 +11,8 @@ local gfmt      = string.format
 local pkg_list  = {}
 
 local function fetch_pkgs()
-	local npkg = 0
+	local npkg = 1
 
-	npkg = npkg + 1
 	pkg_list[npkg] = { url = "https://www.lua.org/ftp/lua-5.1.5.tar.gz",
 		sha256sum = "2640fc56a795f29d28ef15e13c34a47e223960b0240e8cb0a82d9b0738695333", }
 

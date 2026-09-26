@@ -1,0 +1,15 @@
+diff --git a/udebug.c b/udebug.c
+index 9a4ccf4..86570cf 100644
+--- a/udebug.c
++++ b/udebug.c
+@@ -15,7 +15,9 @@
+  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+  */
+-#define _GNU_SOURCE
++#ifndef _GNU_SOURCE
++  #define _GNU_SOURCE 1
++#endif
+ #include <sys/types.h>
+ #include <sys/mman.h>
+ #include <sys/socket.h>

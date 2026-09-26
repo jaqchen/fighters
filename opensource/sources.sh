@@ -49,9 +49,26 @@ opensource_build() {
 
 jsonc_config() {
 	cmake -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX=${FTI_PREFIX} \
-		-DCMAKE_C_COMPILER=${FTC_CC} -DCMAKE_C_FLAGS="${FTC_CFLAGS}" \
-		-DCMAKE_C_COMPILER_RANLIB=${FTC_RANLIB} \
+		-DCMAKE_C_COMPILER=${FTC_CC} -DCMAKE_C_COMPILER_RANLIB=${FTC_RANLIB} \
 		-DBUILD_STATIC_LIBS=OFF -DBUILD_SHARED_LIBS=ON \
+		-DCMAKE_EXE_LINKER_FLAGS="${FTC_LDFLAGS}" \
+		-DCMAKE_SHARED_LINKER_FLAGS="${FTC_LDFLAGS}" \
+		-DCMAKE_MODULE_LINKER_FLAGS="${FTC_LDFLAGS}" .
+	return $?
+}
+
+libubox_config() {
+	apply_patches ../patches-libubox
+	[ $? -ne 0 ] && return 1
+
+	PKG_CONFIG_PATH=${FSTAGING_DIR}${FTI_PREFIX}/lib/pkgconfig \
+	cmake -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX="${FTI_PREFIX}" \
+		-DCMAKE_C_COMPILER=${FTC_CC} -DCMAKE_AR="$(which ${FTC_AR})" \
+		-DCMAKE_C_COMPILER_RANLIB=${FTC_RANLIB} -DBUILD_LUA=ON -DBUILD_EXAMPLES=OFF \
+		-DJSONC_INCLUDE_DIRS=${FSTAGING_DIR}${FTI_PREFIX}/include/json-c \
+		-Djson=${FSTAGING_DIR}${FTI_PREFIX}/lib/libjson-c.so \
+		-DLUA_CFLAGS="-I${FSTAGING_DIR}${FTI_PREFIX}/include" \
+		-DLUAPATH="${FTI_PREFIX}/lib/lua" \
 		-DCMAKE_EXE_LINKER_FLAGS="${FTC_LDFLAGS}" \
 		-DCMAKE_SHARED_LINKER_FLAGS="${FTC_LDFLAGS}" \
 		-DCMAKE_MODULE_LINKER_FLAGS="${FTC_LDFLAGS}" .
@@ -63,3 +80,6 @@ register_source "lua-5.1.5.tar.gz" \
 
 register_source "json-c-0.18.tar.gz" \
 	jsonc_config opensource_build opensource_clean
+
+register_source "opensource/libubox" \
+	libubox_config opensource_build opensource_clean

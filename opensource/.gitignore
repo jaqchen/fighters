@@ -1,3 +1,4 @@
 *.tar.*
+/libubox
 /lua-5.1.5
 /json-c-0.18
