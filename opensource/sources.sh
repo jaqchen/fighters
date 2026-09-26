@@ -149,6 +149,22 @@ jsonfilter_build() {
 	return $?
 }
 
+iw_utils_config() {
+	apply_patches ../patches-iw
+	return $?
+}
+
+iw_utils_build() {
+	local IW_CFLAGS="-I${FSTAGING_DIR}${FTI_PREFIX}/include/libnl-tiny"
+	make IW_FULL=1 CC=${FTC_CC} CFLAGS="${IW_CFLAGS} -DCONFIG_LIBNL20" V=1 \
+		LDFLAGS="${FTC_LDFLAGS}" LIBS="-lm -lnl-tiny" NL1FOUND="" NL2FOUND=Y NLLIBNAME="libnl-tiny" -j1
+	[ $? -ne 0 ] && return 1
+
+	mkdir -p "${FSTAGING_DIR}${FTI_PREFIX}/sbin"
+	cp -v iw "${FSTAGING_DIR}${FTI_PREFIX}/sbin/"
+	return $?
+}
+
 register_source "lua-5.1.5.tar.gz" \
 	lua51_config lua51_compile lua51_clean
 
@@ -169,3 +185,6 @@ register_source "opensource/libnl-tiny" \
 
 register_source "opensource/jsonfilter" \
 	jsonfilter_config jsonfilter_build opensource_clean
+
+register_source "iw-6.17.tar.xz" \
+	iw_utils_config iw_utils_build opensource_clean

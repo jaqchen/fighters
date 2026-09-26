@@ -2,7 +2,5 @@
 *.o
 .*.swp
 /target
-/lua-5.3.6/
-/lzo-2.10/
 .tag-built
 .tag-configured

@@ -20,6 +20,10 @@ local function fetch_pkgs()
 	pkg_list[npkg] = { url = "https://s3.amazonaws.com/json-c_releases/releases/json-c-0.18-nodoc.tar.gz",
 		name = "json-c-0.18.tar.gz",
 		sha256sum = "602cdefc1d2aab8318fc0814b7ce7d59e72514d4276ca3eff92f35f86cf1c160", }
+
+	npkg = npkg + 1
+	pkg_list[npkg] = { url = "https://www.kernel.org/pub/software/network/iw/iw-6.17.tar.xz",
+		sha256sum = "7d182e498289ab39b257da6780d562e415377107f50358ee5b55b8cfe40b1e33", }
 end
 
 local function download_init(arg0)

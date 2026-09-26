@@ -1,6 +1,7 @@
 *.tar.*
 /uci
 /ubus
+/iw-6.17
 /libubox
 /lua-5.1.5
 /libnl-tiny
