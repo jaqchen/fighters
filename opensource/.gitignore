@@ -3,4 +3,5 @@
 /ubus
 /libubox
 /lua-5.1.5
+/libnl-tiny
 /json-c-0.18

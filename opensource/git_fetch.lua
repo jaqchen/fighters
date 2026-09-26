@@ -24,6 +24,10 @@ local function fetch_repos()
 	npkg = npkg + 1
 	repo_list[npkg] = { url = "https://git.openwrt.org/project/ubus.git",
 		dirname = "ubus", commit = "24864e7840b3a02a9ef76284a373f6b2f00b8a9b", }
+
+	npkg = npkg + 1
+	repo_list[npkg] = { url = "https://git.openwrt.org/project/libnl-tiny.git",
+		dirname = "libnl-tiny", commit = "40493a655d8caa2ccf5206dde1e733abe2920432", }
 end
 
 local function clone_init(arg0)

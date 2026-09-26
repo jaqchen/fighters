@@ -1,0 +1,25 @@
+diff --git a/include/netlink-local.h b/include/netlink-local.h
+index 53da8ca..6741409 100644
+--- a/include/netlink-local.h
++++ b/include/netlink-local.h
+@@ -12,7 +12,7 @@
+ #ifndef NETLINK_LOCAL_H_
+ #define NETLINK_LOCAL_H_
+ #ifndef _GNU_SOURCE
+-#define _GNU_SOURCE
++#define _GNU_SOURCE 1
+ #endif
+ 
+ #include <stdio.h>
+diff --git a/unl.c b/unl.c
+index a5714f4..ebefbdd 100644
+--- a/unl.c
++++ b/unl.c
+@@ -1,4 +1,6 @@
+-#define _GNU_SOURCE
++#ifndef _GNU_SOURCE
++  #define _GNU_SOURCE 1
++#endif
+ #include <netlink/netlink.h>
+ #include <netlink/genl/genl.h>
+ #include <netlink/genl/ctrl.h>
