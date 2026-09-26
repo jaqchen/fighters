@@ -10,12 +10,12 @@ lua51_config() {
 }
 
 lua51_compile() {
-	make PLAT=linux EXTRA_CFLAGS="${FTC_CFLAGS} '-DLUA_ROOT=\"${FTI_PREFIX}\"'" \
-		INSTALL_TOP="${FTI_PREFIX}" -j1 all
+	make PLAT=linux EXTRA_CFLAGS="'-DLUA_ROOT=\"${FTI_PREFIX}\"'" \
+		CROSS_COMPILE="${FTC_PREFIX}" INSTALL_TOP="${FTI_PREFIX}" -j1 all
 	[ $? -ne 0 ] && return 1
 
-	make PLAT=linux EXTRA_CFLAGS="${FTC_CFLAGS} -DLUA_ROOT=\"${FTI_PREFIX}\"" \
-		INSTALL_TOP="${FSTAGING_DIR}${FTI_PREFIX}" -j1 install
+	make PLAT=linux EXTRA_CFLAGS="'-DLUA_ROOT=\"${FTI_PREFIX}\"'" \
+		CROSS_COMPILE="${FTC_PREFIX}" INSTALL_TOP="${FSTAGING_DIR}${FTI_PREFIX}" -j1 install
 	return $?
 }
 

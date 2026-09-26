@@ -51,7 +51,7 @@ declare -r -x FCURDIR="$(command pwd -L)"
 # get FTOPDIR defined as early as possible
 get_topdir "$0" || exit 1
 # add external toolchain wrapper to PATH
-export PATH=${FTOPDIR}/toolchain/bin:/usr/bin:/usr/sbin:/bin:/sbin
+export PATH=${FTOPDIR}/toolchains/bin:/usr/local/bin:/usr/bin:/usr/sbin:/bin:/sbin
 # tag files used for control compilation
 declare -r TAG_BUILT='.tag-built'
 declare -r TAG_PATCHED='.tag-patched'

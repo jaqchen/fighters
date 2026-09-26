@@ -27,5 +27,7 @@ declare -r FTC_FLAGS="-Wall -fPIC -O2 -ggdb -D_GNU_SOURCE -fno-omit-frame-pointe
 declare -r FTC_CFLAGS="${FTC_FLAGS}"
 declare -r FTC_CXXFLAGS="${FTC_FLAGS}"
 
+# installation prefix directory
+declare -r FTI_PREFIX=/opt/wrtnet
 declare -r TOOLCHAIN_DIR=/opt/x86-64--musl--stable-2023.11-1
-export PATH=${FTOPDIR}/toolchains/bin:/usr/local/bin:/usr/bin:/usr/sbin:/bin:/sbin
+# export PATH=${FTOPDIR}/toolchains/bin:/usr/local/bin:/usr/bin:/usr/sbin:/bin:/sbin
