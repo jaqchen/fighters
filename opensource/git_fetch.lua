@@ -36,6 +36,10 @@ local function fetch_repos()
 	npkg = npkg + 1
 	repo_list[npkg] = { url = "https://github.com/jow-/ucode.git",
 		dirname = "ucode", commit = "b885dd0fe1e974551fb1233ca5f3aa74d80b74d9", }
+
+	npkg = npkg + 1
+	repo_list[npkg] = { url = "https://git.openwrt.org/project/udebug.git",
+		dirname = "udebug", commit = "75843a1bfcc99019fdb9bda8cafd28dc821c2be0", }
 end
 
 local function clone_init(arg0)

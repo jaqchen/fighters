@@ -208,6 +208,25 @@ ucode_config() {
 	return $?
 }
 
+udebug_config() {
+	apply_patches ../patches-udebug
+	[ $? -ne 0 ] && return 1
+
+	PKG_CONFIG_PATH=${FSTAGING_DIR}${FTI_PREFIX}/lib/pkgconfig \
+	cmake -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX="${FTI_PREFIX}" \
+		-DCMAKE_C_COMPILER=${FTC_CC} -DCMAKE_AR="$(which ${FTC_AR})" \
+		-DCMAKE_C_COMPILER_RANLIB=${FTC_RANLIB} \
+		-Dubus_include_dir=${FSTAGING_DIR}${FTI_PREFIX}/include \
+		-Ducode_include_dir=${FSTAGING_DIR}${FTI_PREFIX}/include \
+		-Duloop_include_dir=${FSTAGING_DIR}${FTI_PREFIX}/include \
+		-Dubox=${FSTAGING_DIR}${FTI_PREFIX}/lib/libubox.so \
+		-Dubus=${FSTAGING_DIR}${FTI_PREFIX}/lib/libubus.so \
+		-DCMAKE_EXE_LINKER_FLAGS="${FTC_LDFLAGS}" \
+		-DCMAKE_SHARED_LINKER_FLAGS="${FTC_LDFLAGS}" \
+		-DCMAKE_MODULE_LINKER_FLAGS="${FTC_LDFLAGS}" .
+	return $?
+}
+
 register_source "lua-5.1.5.tar.gz" \
 	lua51_config lua51_compile lua51_clean
 
@@ -237,3 +256,6 @@ register_source 'libmd-1.2.0.tar.xz' \
 
 register_source "opensource/ucode" \
 	ucode_config opensource_build opensource_clean
+
+register_source "opensource/udebug" \
+	udebug_config opensource_build opensource_clean

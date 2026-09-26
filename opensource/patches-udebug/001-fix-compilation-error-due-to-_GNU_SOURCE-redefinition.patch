@@ -1,0 +1,24 @@
+diff --git a/client.c b/client.c
+index e758832..f6c4365 100644
+--- a/client.c
++++ b/client.c
+@@ -1,4 +1,6 @@
+-#define _GNU_SOURCE
++#ifndef _GNU_SOURCE
++  #define _GNU_SOURCE 1
++#endif
+ #include <sys/un.h>
+ #include <sys/types.h>
+ #include <sys/socket.h>
+diff --git a/lib-ucode.c b/lib-ucode.c
+index fbdd8bd..65f8ba1 100644
+--- a/lib-ucode.c
++++ b/lib-ucode.c
+@@ -1,4 +1,6 @@
+-#define _GNU_SOURCE
++#ifndef _GNU_SOURCE
++  #define _GNU_SOURCE 1
++#endif
+ #include <math.h>
+ #include <ctype.h>
+ 
