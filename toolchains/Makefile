@@ -49,7 +49,7 @@ all: $(TARGETS)
 
 % : %.c
 	$(HOSTCC) $(HOST_CFLAGS) '-DEXTC_ROOT="$(EXTC_ROOT)"' $(if $(FTC_FLAGS),'-DEXTC_CFLAGS="$(FTC_FLAGS)"') \
-		'-DEXTI_PREFIX="$(FTI_PREFIX)"' -o $@ $^
+		'-DEXTC_PREFIX="$(FTC_PREFIX)"' '-DEXTI_PREFIX="$(FTI_PREFIX)"' -o $@ $^
 define external_toolchain
 .PHONY: bin/$(FTC_PREFIX)$(1)
 bin/$(FTC_PREFIX)$(1): $(2)

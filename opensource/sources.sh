@@ -302,6 +302,27 @@ hostapd_clean() {
 	return 0
 }
 
+netifd_config() {
+	PKG_CONFIG_PATH="${FSTAGING_DIR}${FTI_PREFIX}/lib/pkgconfig" \
+	cmake -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX="${FTI_PREFIX}" \
+		-DCMAKE_C_COMPILER=${FTC_CC} -DCMAKE_AR="$(which ${FTC_AR})" \
+		-DCMAKE_C_FLAGS="-I${FSTAGING_DIR}${FTI_PREFIX}/include/libnl-tiny" \
+		-Dubox=${FSTAGING_DIR}${FTI_PREFIX}/lib/libubox.so \
+		-Dubus=${FSTAGING_DIR}${FTI_PREFIX}/lib/libubus.so \
+		-Duci=${FSTAGING_DIR}${FTI_PREFIX}/lib/libuci.so \
+		-Dudebug=${FSTAGING_DIR}${FTI_PREFIX}/lib/libudebug.so \
+		-Dblobmsg_json=${FSTAGING_DIR}${FTI_PREFIX}/lib/libblobmsg_json.so \
+		-Djson=${FSTAGING_DIR}${FTI_PREFIX}/lib/libjson-c.so \
+		-DLIBNL_LIBS=${FSTAGING_DIR}${FTI_PREFIX}/lib/libnl-tiny.so \
+		-Ducode=${FSTAGING_DIR}${FTI_PREFIX}/lib/libucode.so \
+		-Ducode_include_dir=${FSTAGING_DIR}${FTI_PREFIX}/include \
+		-Dubox_include_dir=${FSTAGING_DIR}${FTI_PREFIX}/include \
+		-DCMAKE_EXE_LINKER_FLAGS="${FTC_LDFLAGS}" \
+		-DCMAKE_SHARED_LINKER_FLAGS="${FTC_LDFLAGS}" \
+		-DCMAKE_MODULE_LINKER_FLAGS="${FTC_LDFLAGS}" .
+	return $?
+}
+
 register_source "lua-5.1.5.tar.gz" \
 	lua51_config lua51_compile lua51_clean
 
@@ -340,3 +361,6 @@ register_source "openssl-3.5.7.tar.gz" \
 
 register_source "opensource/hostapd" \
 	hostapd_config hostapd_build hostapd_clean
+
+register_source "opensource/netifd" \
+	netifd_config opensource_build opensource_clean
