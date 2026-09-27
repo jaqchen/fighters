@@ -12,25 +12,26 @@ local pkg_list  = {}
 
 local function fetch_pkgs()
 	local npkg = 1
+	local http = os.getenv("LOCAL_HTTP")
 
-	pkg_list[npkg] = { url = "https://www.lua.org/ftp/lua-5.1.5.tar.gz",
+	pkg_list[npkg] = { url = gfmt("%s/lua-5.1.5.tar.gz", http or "https://www.lua.org/ftp"),
 		sha256sum = "2640fc56a795f29d28ef15e13c34a47e223960b0240e8cb0a82d9b0738695333", }
 
 	npkg = npkg + 1
-	pkg_list[npkg] = { url = "https://s3.amazonaws.com/json-c_releases/releases/json-c-0.18-nodoc.tar.gz",
+	pkg_list[npkg] = { url = gfmt("%s/json-c-0.18-nodoc.tar.gz", http or "https://s3.amazonaws.com/json-c_releases/releases"),
 		name = "json-c-0.18.tar.gz",
 		sha256sum = "602cdefc1d2aab8318fc0814b7ce7d59e72514d4276ca3eff92f35f86cf1c160", }
 
 	npkg = npkg + 1
-	pkg_list[npkg] = { url = "https://www.kernel.org/pub/software/network/iw/iw-6.17.tar.xz",
+	pkg_list[npkg] = { url = gfmt("%s/iw-6.17.tar.xz", http or "https://www.kernel.org/pub/software/network/iw"),
 		sha256sum = "7d182e498289ab39b257da6780d562e415377107f50358ee5b55b8cfe40b1e33", }
 
 	npkg = npkg + 1
-	pkg_list[npkg] = { url = "https://archive.hadrons.org/software/libmd/libmd-1.2.0.tar.xz",
+	pkg_list[npkg] = { url = gfmt("%s/libmd-1.2.0.tar.xz", http or "https://archive.hadrons.org/software/libmd"),
 		sha256sum = "ac15ffb8430502fbaccdec66c5a82ee0eab0b0f36220df56710feadfeb13d0a0", }
 
 	npkg = npkg + 1
-	pkg_list[npkg] = { url = "https://github.com/openssl/openssl/releases/download/openssl-3.5.7/openssl-3.5.7.tar.gz",
+	pkg_list[npkg] = { url = gfmt("%s/openssl-3.5.7.tar.gz", http or "https://github.com/openssl/openssl/releases/download/openssl-3.5.7"),
 		sha256sum = "a8c0d28a529ca480f9f36cf5792e2cd21984552a3c8e4aa11a24aa31aeac98e8", }
 end
 

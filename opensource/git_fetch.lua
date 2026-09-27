@@ -13,41 +13,43 @@ local repo_list = {}
 
 local function fetch_repos()
 	local npkg = 1
+	local lgit = os.getenv("LOCAL_GIT")
+	local ogit = "https://git.openwrt.org/project"
 
-	repo_list[npkg] = { url = "https://git.openwrt.org/project/libubox.git",
+	repo_list[npkg] = { url = gfmt("%s/libubox.git", lgit or ogit),
 		dirname = "libubox", commit = "7677b7a4f3a46f68e6f5ba6818f7b72fdd7dbaa0", }
 
 	npkg = npkg + 1
-	repo_list[npkg] = { url = "https://git.openwrt.org/project/uci.git",
+	repo_list[npkg] = { url = gfmt("%s/uci.git", lgit or ogit),
 		dirname = "uci", commit = "66127cd76c5d0bd46d5a90302cc6110f53a4e2f8", }
 
 	npkg = npkg + 1
-	repo_list[npkg] = { url = "https://git.openwrt.org/project/ubus.git",
+	repo_list[npkg] = { url = gfmt("%s/ubus.git", lgit or ogit),
 		dirname = "ubus", commit = "24864e7840b3a02a9ef76284a373f6b2f00b8a9b", }
 
 	npkg = npkg + 1
-	repo_list[npkg] = { url = "https://git.openwrt.org/project/libnl-tiny.git",
+	repo_list[npkg] = { url = gfmt("%s/libnl-tiny.git", lgit or ogit),
 		dirname = "libnl-tiny", commit = "40493a655d8caa2ccf5206dde1e733abe2920432", }
 
 	npkg = npkg + 1
-	repo_list[npkg] = { url = "https://git.openwrt.org/project/jsonpath.git",
+	repo_list[npkg] = { url = gfmt("%s/jsonpath.git", lgit or ogit),
 		dirname = "jsonfilter", commit = "b9034210bd331749673416c6bf389cccd4e23610", }
 
 	npkg = npkg + 1
-	repo_list[npkg] = { url = "https://github.com/jow-/ucode.git",
+	repo_list[npkg] = { url = gfmt("%s/ucode.git", lgit or "https://github.com/jow-"),
 		dirname = "ucode", commit = "b885dd0fe1e974551fb1233ca5f3aa74d80b74d9", }
 
 	npkg = npkg + 1
-	repo_list[npkg] = { url = "https://git.openwrt.org/project/udebug.git",
+	repo_list[npkg] = { url = gfmt("%s/udebug.git", lgit or ogit),
 		dirname = "udebug", commit = "75843a1bfcc99019fdb9bda8cafd28dc821c2be0", }
 
 	npkg = npkg + 1
-	repo_list[npkg] = { url = "https://w1.fi/hostap.git",
+	repo_list[npkg] = { url = gfmt("%s/hostap.git", lgit or "https://w1.fi"), branch = "2_12",
 		dirname = "hostapd", commit = "f08f2749aa696c4e47c5c0f591dda99951bf9fac", }
 
 	npkg = npkg + 1
-	repo_list[npkg] = { url = "https://git.openwrt.org/project/netifd.git",
-		dirname = "netifd", commit = "6088f7b3b9d756131619c7fb3b520bf0cc0ec0d2", }
+	repo_list[npkg] = { url = gfmt("%s/netifd.git", lgit or ogit),
+		dirname = "netifd", commit = "c6122254eb7003377b67a6ad14d284b69725bbee", }
 end
 
 local function clone_init(arg0)
@@ -89,7 +91,7 @@ local function get_commit_id(pdir)
 	return cid
 end
 
-local function download_git(url, gdir, cid)
+local function download_git(url, gdir, cid, branch)
 	if type(url) ~= "string" or #url == 0 then
 		io.stderr:write("Error, download URL must be a valid string.\n")
 		io.stderr:flush()
@@ -116,7 +118,8 @@ local function download_git(url, gdir, cid)
 	io.stdout:flush()
 
 	local okay = sysutil.call(0, "sh", "-c",
-		gfmt("git clone '%s' '%s' && cd '%s' && git checkout '%s'", url, gdir, gdir, cid))
+		gfmt("git clone -b '%s' '%s' '%s' && cd '%s' && git checkout '%s'",
+			branch or "master", url, gdir, gdir, cid))
 	if okay ~= 0 then
 		io.stderr:write(gfmt("Error, failed to clone '%s' to directory '%s'\n", url, gdir))
 		io.stderr:flush()
@@ -138,7 +141,7 @@ local function mainfunc()
 	fetch_repos()
 	local errnum = 0
 	for _, repo in ipairs(repo_list) do
-		if not download_git(repo.url, repo.dirname, repo.commit) then
+		if not download_git(repo.url, repo.dirname, repo.commit, repo.branch) then
 			errnum = errnum + 1
 		end
 	end
