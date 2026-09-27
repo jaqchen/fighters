@@ -292,7 +292,10 @@ hostapd_build() {
 		ln -sv -f wpad "${DESTDIR}/sbin/wpa_supplicant"
 	[ $? -ne 0 ] && return 4
 
-	# TODO: install wifi-scripts
+	cd ../wifi-scripts || return 5
+	echo "Installing wifi-scripts to staging area ..."
+	cp -rf --preserve=mode -P files/* "${DESTDIR}/" && \
+		cp -rf --preserve=mode -P files-ucode/* "${DESTDIR}/"
 	return 0
 }
 
