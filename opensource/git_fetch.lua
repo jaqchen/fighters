@@ -44,6 +44,10 @@ local function fetch_repos()
 	npkg = npkg + 1
 	repo_list[npkg] = { url = "https://w1.fi/hostap.git",
 		dirname = "hostapd", commit = "f08f2749aa696c4e47c5c0f591dda99951bf9fac", }
+
+	npkg = npkg + 1
+	repo_list[npkg] = { url = "https://git.openwrt.org/project/netifd.git",
+		dirname = "netifd", commit = "6088f7b3b9d756131619c7fb3b520bf0cc0ec0d2", }
 end
 
 local function clone_init(arg0)
