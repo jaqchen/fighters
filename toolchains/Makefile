@@ -16,21 +16,6 @@ MAKEFLAGS   += -r -R
 HOSTCC      := gcc
 HOST_CFLAGS := -Wall -O2 -fPIC -D_GNU_SOURCE
 
-# check for external toolchain root directory
-ifeq ($(wildcard $(EXTC_ROOT)),)
-$(error invalid EXTC_ROOT defined: $(EXTC_ROOT))
-endif
-
-# check external toolchain prefix
-ifeq ("$(FTC_PREFIX)","")
-$(error FTC_PREFIX not defined)
-endif
-
-# check installation prefix
-ifeq ("$(FTI_PREFIX)","")
-$(error FTI_PREFIX not defined)
-endif
-
 # external toolchain compilers
 EXTC_CLS    := c++ cpp g++ gcc
 EXTC_BIN    := addr2line ar as c++filt dwp \

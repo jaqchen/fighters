@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-declare -r FTC_HOST=arm-linux-gnueabihf
-declare -r FTC_PREFIX="${FTC_HOST}-"
+declare -r FTC_HOST=arm-linux-musleabihf
+declare -r FTC_PREFIX="arm-buildroot-linux-musleabihf-"
 declare -r FTC_CC="${FTC_PREFIX}gcc"
 declare -r FTC_CXX="${FTC_PREFIX}g++"
 declare -r FTC_STRIP="${FTC_PREFIX}strip"
@@ -30,5 +30,5 @@ declare -r FTC_CXXFLAGS="${FTC_FLAGS}"
 # installation prefix directory
 declare -r FTI_PREFIX=/opt/wrtnet
 declare -r FTC_LDFLAGS="-Wl,-rpath=${FTI_PREFIX}/lib"
-declare -r TOOLCHAIN_DIR=/opt/gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabi
+declare -r TOOLCHAIN_DIR=/opt/armv7-eabihf--musl--stable-2025.08-1
 # export PATH=${FTOPDIR}/toolchains/bin:/usr/local/bin:/usr/bin:/usr/sbin:/bin:/sbin
