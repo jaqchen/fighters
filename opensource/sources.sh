@@ -303,6 +303,9 @@ hostapd_clean() {
 }
 
 netifd_config() {
+	apply_patches ../patches-netifd
+	[ $? -ne 0 ] && return 1
+
 	PKG_CONFIG_PATH="${FSTAGING_DIR}${FTI_PREFIX}/lib/pkgconfig" \
 	cmake -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX="${FTI_PREFIX}" \
 		-DCMAKE_C_COMPILER=${FTC_CC} -DCMAKE_AR="$(which ${FTC_AR})" \
