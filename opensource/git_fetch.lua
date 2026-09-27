@@ -40,6 +40,10 @@ local function fetch_repos()
 	npkg = npkg + 1
 	repo_list[npkg] = { url = "https://git.openwrt.org/project/udebug.git",
 		dirname = "udebug", commit = "75843a1bfcc99019fdb9bda8cafd28dc821c2be0", }
+
+	npkg = npkg + 1
+	repo_list[npkg] = { url = "https://w1.fi/hostap.git",
+		dirname = "hostapd", commit = "f08f2749aa696c4e47c5c0f591dda99951bf9fac", }
 end
 
 local function clone_init(arg0)

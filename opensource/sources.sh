@@ -257,6 +257,51 @@ openssl_build() {
 	return $?
 }
 
+hostapd_config() {
+	[ ! -e "${TAG_PATCHED}" ] && cp -r -p ../sources-hostapd/* ./
+	apply_patches ../patches-hostapd
+	[ $? -ne 0 ] && return 1
+
+	cp -v -f ../files-hostapd/hostapd-full.config hostapd/.config && \
+		cp -v -f ../files-hostapd/wpa_supplicant-full.config wpa_supplicant/.config
+	return $?
+}
+
+hostapd_build() {
+	local DESTDIR="${FSTAGING_DIR}${FTI_PREFIX}"
+	local DRIVER_ARGS="CONFIG_ACS=y CONFIG_DRIVER_NL80211=y CONFIG_UCODE=y CONFIG_APUP=y CONFIG_TLS=openssl CONFIG_SAE=y"
+	PKG_CONFIG_PATH="${DESTDIR}/lib/pkgconfig" make -C hostapd V=1 -j4 CONFIG_LIBNL_TINY=y \
+		CC=${FTC_CC} MULTICALL=1 PKG_CONFIG=pkg-config \
+		${DRIVER_ARGS} EXTRA_LDFLAGS="${FTC_LDFLAGS}" \
+		EXTRA_CFLAGS="-I${DESTDIR}/include/libnl-tiny" hostapd_multi.a
+	[ $? -ne 0 ] && return 1
+
+	PKG_CONFIG_PATH="${DESTDIR}/lib/pkgconfig" make -C wpa_supplicant V=1 -j4 CONFIG_LIBNL_TINY=y \
+		CC=${FTC_CC} MULTICALL=1 PKG_CONFIG=pkg-config \
+		${DRIVER_ARGS} EXTRA_LDFLAGS="${FTC_LDFLAGS}" \
+		EXTRA_CFLAGS="-I${DESTDIR}/include/libnl-tiny" wpa_supplicant_multi.a
+	[ $? -ne 0 ] && return 2
+
+	${FTC_CC} -DMULTICALL=1 -o wpad ../files-hostapd/multicall.c hostapd/hostapd_multi.a wpa_supplicant/wpa_supplicant_multi.a \
+		-lubox -lubus -lblobmsg_json -lucode -lm -lnl-tiny -ludebug ${FTC_LDFLAGS} -lcrypto -lssl
+	[ $? -ne 0 ] && return 3
+
+	mkdir -p "${DESTDIR}/sbin"
+	cp -v -f wpad "${DESTDIR}/sbin/" && \
+		ln -sv -f wpad "${DESTDIR}/sbin/hostapd" && \
+		ln -sv -f wpad "${DESTDIR}/sbin/wpa_supplicant"
+	[ $? -ne 0 ] && return 4
+
+	# TODO: install wifi-scripts
+	return 0
+}
+
+hostapd_clean() {
+	make -C hostapd -j1 clean
+	make -C wpa_supplicant -j1 clean
+	return 0
+}
+
 register_source "lua-5.1.5.tar.gz" \
 	lua51_config lua51_compile lua51_clean
 
@@ -281,7 +326,7 @@ register_source "opensource/jsonfilter" \
 register_source "iw-6.17.tar.xz" \
 	iw_utils_config iw_utils_build opensource_clean
 
-register_source 'libmd-1.2.0.tar.xz' \
+register_source "libmd-1.2.0.tar.xz" \
 	libmd_config libmd_build opensource_clean
 
 register_source "opensource/ucode" \
@@ -290,5 +335,8 @@ register_source "opensource/ucode" \
 register_source "opensource/udebug" \
 	udebug_config opensource_build opensource_clean
 
-register_source 'openssl-3.5.7.tar.gz' \
+register_source "openssl-3.5.7.tar.gz" \
 	openssl_config openssl_build opensource_clean
+
+register_source "opensource/hostapd" \
+	hostapd_config hostapd_build hostapd_clean
