@@ -1,0 +1,94 @@
+diff --git a/config.c b/config.c
+index 063a004..ab06355 100644
+--- a/config.c
++++ b/config.c
+@@ -11,7 +11,9 @@
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  */
+-#define _GNU_SOURCE
++#ifndef _GNU_SOURCE
++  #define _GNU_SOURCE 1
++#endif
+ #include <string.h>
+ #include <stdlib.h>
+ #include <stdio.h>
+diff --git a/handler.c b/handler.c
+index 5eb3132..9f3eca3 100644
+--- a/handler.c
++++ b/handler.c
+@@ -11,8 +11,9 @@
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  */
+-
+-#define _GNU_SOURCE
++#ifndef _GNU_SOURCE
++  #define _GNU_SOURCE 1
++#endif
+ #include <glob.h>
+ #include <fcntl.h>
+ #include <stdio.h>
+diff --git a/proto-ext.c b/proto-ext.c
+index 2bedc0c..b1835a3 100644
+--- a/proto-ext.c
++++ b/proto-ext.c
+@@ -11,8 +11,9 @@
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  */
+-#define _GNU_SOURCE
+-
++#ifndef _GNU_SOURCE
++  #define _GNU_SOURCE 1
++#endif
+ #include <string.h>
+ #include <stdlib.h>
+ #include <stdio.h>
+diff --git a/proto-shell.c b/proto-shell.c
+index 3b55f68..641591f 100644
+--- a/proto-shell.c
++++ b/proto-shell.c
+@@ -11,8 +11,9 @@
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  */
+-#define _GNU_SOURCE
+-
++#ifndef _GNU_SOURCE
++  #define _GNU_SOURCE 1
++#endif
+ #include <string.h>
+ #include <stdlib.h>
+ #include <stdio.h>
+diff --git a/system-linux.c b/system-linux.c
+index a7419a9..aa4132a 100644
+--- a/system-linux.c
++++ b/system-linux.c
+@@ -16,7 +16,9 @@
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  */
+-#define _GNU_SOURCE
++#ifndef _GNU_SOURCE
++  #define _GNU_SOURCE 1
++#endif
+ #define SYSTEM_IMPL
+ 
+ #include <sys/socket.h>
+diff --git a/ubus.c b/ubus.c
+index 06c924b..b2d1af8 100644
+--- a/ubus.c
++++ b/ubus.c
+@@ -11,8 +11,9 @@
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  */
+-#define _GNU_SOURCE
+-
++#ifndef _GNU_SOURCE
++  #define _GNU_SOURCE 1
++#endif
+ #include <arpa/inet.h>
+ #include <string.h>
+ #include <stdio.h>
