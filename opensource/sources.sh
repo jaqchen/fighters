@@ -93,6 +93,17 @@ uci_config() {
 	return $?
 }
 
+uci_compile() {
+	make VERBOSE=1 -j4
+	[ $? -ne 0 ] && return 1
+
+	make VERBOSE=1 DESTDIR=${FSTAGING_DIR} -j1 install
+	[ $? -ne 0 ] && return 2
+
+	cp -r -f ../files-uci/* "${FSTAGING_DIR}${FTI_PREFIX}/"
+	return $?
+}
+
 ubus_config() {
 	apply_patches ../patches-ubus
 	[ $? -ne 0 ] && return 1
@@ -329,6 +340,19 @@ netifd_config() {
 	return $?
 }
 
+netifd_compile() {
+	make VERBOSE=1 -j4
+	[ $? -ne 0 ] && return 1
+
+	make VERBOSE=1 DESTDIR=${FSTAGING_DIR} -j1 install
+	[ $? -ne 0 ] && return 2
+
+	local DESTPFX="${FSTAGING_DIR}${FTI_PREFIX}"
+	cp -r --preserve=mode -P -f ../files-netifd/* "${DESTPFX}/" && \
+		cp -r --preserve=mode -P -f ../files-openwrt/* "${DESTPFX}/"
+	return $?
+}
+
 register_source "lua-5.1.5.tar.gz" \
 	lua51_config lua51_compile lua51_clean
 
@@ -339,7 +363,7 @@ register_source "opensource/libubox" \
 	libubox_config opensource_build opensource_clean
 
 register_source "opensource/uci" \
-	uci_config opensource_build opensource_clean
+	uci_config uci_compile opensource_clean
 
 register_source "opensource/ubus" \
 	ubus_config opensource_build opensource_clean
@@ -369,4 +393,4 @@ register_source "opensource/hostapd" \
 	hostapd_config hostapd_build hostapd_clean
 
 register_source "opensource/netifd" \
-	netifd_config opensource_build opensource_clean
+	netifd_config netifd_compile opensource_clean

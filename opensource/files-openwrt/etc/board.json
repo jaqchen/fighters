@@ -1,0 +1,12 @@
+{
+	"model": {
+		"id": "fighters,wrtnet",
+		"name": "WRTNET of Fighters"
+	},
+	"network": {
+		"wan": {
+			"device": "eth0",
+			"protocol": "dhcp"
+		}
+	}
+}
