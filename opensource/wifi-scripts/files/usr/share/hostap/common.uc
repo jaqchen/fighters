@@ -40,9 +40,30 @@ const mesh_params = {
 	mesh_nolearn: "nolearn"
 };
 
+function wdev_set_down(name)
+{
+	if (!name || !readfile(`/sys/class/net/${name}/ifindex`))
+		return;
+
+	/*
+	 * Flush the IP addresses and bring the existing network device down,
+	 * but never delete, re-create or rename it. The WiFi driver keeps the
+	 * device (e.g. wlan0) so that it can be re-used in place.
+	 */
+	system(`ip addr flush dev ${name}`);
+	system(`ip link set dev ${name} down`);
+}
+
 function wdev_remove(name)
 {
-	nl80211.request(nl80211.const.NL80211_CMD_DEL_INTERFACE, 0, { dev: name });
+	/* Compatibility helper: never remove the network device. */
+	wdev_set_down(name);
+}
+
+function wdev_set_powersave(name, on)
+{
+	nl80211.request(nl80211.const.NL80211_CMD_SET_POWER_SAVE, 0,
+		{ dev: name, ps_state: on ? 1 : 0 });
 }
 
 function __phy_is_fullmac(phyidx)
@@ -86,8 +107,6 @@ function wdev_create(phy, name, data)
 {
 	let phyidx = int(readfile(`/sys/class/ieee80211/${phy}/index`));
 
-	wdev_remove(name);
-
 	if (!iftypes[data.mode])
 		return `Invalid mode: ${data.mode}`;
 
@@ -108,13 +127,20 @@ function wdev_create(phy, name, data)
 
 	nl80211.error();
 
-	let reuse_ifname = find_reusable_wdev(phyidx);
-	if (reuse_ifname &&
-	    (reuse_ifname == name ||
-	     rtnl.request(rtnl.const.RTM_SETLINK, 0, { dev: reuse_ifname, ifname: name}) != false)) {
-		req.dev = req.ifname;
-		delete req.ifname;
-		nl80211.request(nl80211.const.NL80211_CMD_SET_INTERFACE, 0, req);
+	if (readfile(`/sys/class/net/${name}/ifindex`)) {
+		/*
+		 * The network device already exists: keep it as-is, never
+		 * delete, re-create or rename it. Only adjust the interface
+		 * type in place when it does not match the requested mode.
+		 */
+		let cur = nl80211.request(
+			nl80211.const.NL80211_CMD_GET_INTERFACE, 0, { dev: name });
+		if (!cur || cur.iftype != req.iftype) {
+			nl80211.request(nl80211.const.NL80211_CMD_SET_INTERFACE, 0, {
+				dev: name,
+				iftype: req.iftype,
+			});
+		}
 	} else {
 		nl80211.request(
 			nl80211.const.NL80211_CMD_NEW_INTERFACE,
@@ -126,10 +152,8 @@ function wdev_create(phy, name, data)
 	if (error)
 		return error;
 
-	if (data.powersave != null) {
-		nl80211.request(nl80211.const.NL80211_CMD_SET_POWER_SAVE, 0,
-			{ dev: name, ps_state: data.powersave ? 1 : 0});
-	}
+	if (data.powersave != null)
+		wdev_set_powersave(name, data.powersave);
 
 	return null;
 }
@@ -419,4 +443,4 @@ function vlist_new(cb) {
 	}, vlist_proto);
 }
 
-export { wdev_remove, wdev_create, wdev_set_mesh_params, wdev_set_radio_mask, wdev_set_up, is_equal, vlist_new, phy_is_fullmac, phy_open };
+export { wdev_remove, wdev_set_down, wdev_set_powersave, wdev_create, wdev_set_mesh_params, wdev_set_radio_mask, wdev_set_up, is_equal, vlist_new, phy_is_fullmac, phy_open };
