@@ -43,6 +43,8 @@ end
 local g_symlinks = {
 	{ source = g_prefix .. "/bin/ipcalc.sh",                 dest = "/bin/ipcalc.sh", },
 	{ source = g_prefix .. "/bin/uci",                       dest = "/sbin/uci", },
+	{ source = g_prefix .. "/bin/ucode",                     dest = "/usr/bin/ucode", },
+	{ source = g_prefix .. "/bin/ucode",                     dest = "/usr/bin/utpl", },
 	{ source = g_prefix .. "/lib/config",                    dest = "/lib/config", },
 	{ source = g_prefix .. "/lib/functions",                 dest = "/lib/functions", },
 	{ source = g_prefix .. "/lib/functions.sh",              dest = "/lib/functions.sh", },
