@@ -70,48 +70,15 @@ function setup_phy(phy, config, data) {
 	config.channel = +config.channel;
 	config.frequency = get_channel_frequency(config.band, config.channel);
 
-	if (config.country_code) {
-		log(`Setting country code to ${config.country_code}`);
-		system(`iw reg set ${config.country_code}`);
-	}
-
-	set_default(config, 'rxantenna', 0xffffffff);
-	set_default(config, 'txantenna', 0xffffffff);
-
-	if (config.txantenna == 'all')
-		config.txantenna = 0xffffffff;
-	if (config.rxantenna == 'all')
-		config.rxantenna = 0xffffffff;
-
-	let antenna_changed = (config.txantenna != data?.txantenna || config.rxantenna != data?.rxantenna);
-
-	if (antenna_changed)
-		reset_config(phy, config.radio);
-
+	/*
+	 * Do not touch the wireless device itself (no `iw` configuration
+	 * commands); keep the existing interfaces and their settings as they
+	 * are set up by the driver / vendor startup scripts.
+	 */
 	netifd.set_data({
 		phy,
 		radio: config.radio,
-		txantenna: config.txantenna,
-		rxantenna: config.rxantenna
 	});
-
-	if (config.txpower)
-		config.txpower = 'fixed ' + config.txpower + '00';
-	else
-		config.txpower = 'auto';
-
-	log(`Configuring '${phy}' distance: ${config.distance}`);
-	if (antenna_changed) {
-		log(`Setting antenna for '${phy}' txantenna: ${config.txantenna}, rxantenna: ${config.rxantenna}`);
-		system(`iw phy ${phy} set antenna ${config.txantenna} ${config.rxantenna}`);
-	}
-	system(`iw phy ${phy} set distance ${config.distance}`);
-	system(`iw phy ${phy} set txpower ${config.txpower}`);
-
-	if (config.frag)
-		system(`iw phy ${phy} set frag ${config.frag}`);
-	if (config.rts)
-		system(`iw phy ${phy} set rts ${config.rts}`);
 }
 
 function iw_htmode(config) {
