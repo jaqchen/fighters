@@ -367,6 +367,11 @@ netifd_compile() {
 	[ $? -ne 0 ] && return 2
 
 	local DESTPFX="${FSTAGING_DIR}${FTI_PREFIX}"
+	# install scripts from `scripts directory
+	mkdir -p "${DESTPFX}/lib/netifd"
+	cp -v ./scripts/netifd-proto.sh ./scripts/utils.sh "${DESTPFX}/lib/netifd/"
+	[ $? -ne 0 ] && return 3
+
 	cp -r --preserve=mode -P -f ../files-netifd/* "${DESTPFX}/" && \
 		cp -r --preserve=mode -P -f ../files-openwrt/* "${DESTPFX}/"
 	return $?
