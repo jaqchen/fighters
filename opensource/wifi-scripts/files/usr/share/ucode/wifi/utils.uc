@@ -127,8 +127,16 @@ function find_phy_by_name(phys, name, rename) {
 
 export function find_phy(config, rename) {
 	let phys = lsdir("/sys/class/ieee80211");
+	let phy = find_phy_by_path(phys, config.path) ??
+	          find_phy_by_macaddr(phys, config.macaddr) ??
+	          find_phy_by_name(phys, config.phy, rename);
 
-	return find_phy_by_path(phys, config.path) ??
-	       find_phy_by_macaddr(phys, config.macaddr) ??
-	       find_phy_by_name(phys, config.phy, rename);
+	/*
+	 * The SDIO device path of the phy may change when the WiFi driver is
+	 * re-initialized; fall back to the only available phy in that case.
+	 */
+	if (!phy && length(phys) == 1)
+		phy = phys[0];
+
+	return phy;
 };
