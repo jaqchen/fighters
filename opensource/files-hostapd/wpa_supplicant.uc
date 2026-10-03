@@ -1,7 +1,7 @@
 let libubus = require("ubus");
 import * as uloop from "uloop";
 import { open, readfile } from "fs";
-import { wdev_create, wdev_set_mesh_params, wdev_remove, is_equal, wdev_set_up, vlist_new, phy_open } from "common";
+import { wdev_create, wdev_set_mesh_params, wdev_set_down, wdev_set_powersave, is_equal, wdev_set_up, vlist_new, phy_open } from "common";
 
 let ubus = libubus.connect();
 
@@ -29,8 +29,19 @@ function iface_stop(iface)
 		return;
 
 	delete wpas.data.iface_phy[ifname];
+	wdev_set_down(ifname);
 	wpas.remove_iface(ifname);
-	wdev_remove(ifname);
+
+	/*
+	 * Removing the interface may make the driver re-create and re-enable
+	 * the netdev; make sure it ends up flushed and down unless it has
+	 * been started again in the meantime.
+	 */
+	uloop.timer(1000, () => {
+		if (!wpas.interfaces[ifname])
+			wdev_set_down(ifname);
+	});
+
 	iface.running = false;
 }
 
@@ -49,11 +60,21 @@ function iface_start(phydev, iface, macaddr_list)
 		wdev_config.macaddr = phydev.macaddr_next();
 
 	wpas.data.iface_phy[ifname] = phy;
-	wdev_remove(ifname);
-	let ret = phydev.wdev_add(ifname, wdev_config);
-	if (ret)
-		wpas.printf(`Failed to create device ${ifname}: ${ret}`);
-	wdev_set_up(ifname, true);
+
+	/*
+	 * Keep existing network devices untouched: never delete and re-create
+	 * or rename them, just use the interface as-is.
+	 */
+	if (readfile(`/sys/class/net/${ifname}/ifindex`)) {
+		wdev_set_up(ifname, true);
+		if (iface.config.powersave != null)
+			wdev_set_powersave(ifname, iface.config.powersave);
+	} else {
+		let ret = phydev.wdev_add(ifname, wdev_config);
+		if (ret)
+			wpas.printf(`Failed to create device ${ifname}: ${ret}`);
+		wdev_set_up(ifname, true);
+	}
 	wpas.add_iface(iface.config);
 	iface.running = true;
 }
@@ -136,8 +157,8 @@ function mld_remove(data)
 
 	let name = data.name;
 	wpas.printf(`Remove MLD interface ${name}`);
+	wdev_set_down(name);
 	wpas.remove_iface(name);
-	wdev_remove(name);
 	data.radio_mask_up = 0;
 }
 
@@ -182,9 +203,11 @@ function mld_add(data, phy_list)
 	let wdev_config = { ...data.config, radio_mask: data.radio_mask };
 	if (!wdev_config.macaddr)
 		wdev_config.macaddr = phydev.macaddr_next();
-	let ret = phydev.wdev_add(name, wdev_config);
-	if (ret)
-		wpas.printf(`Failed to create device ${name}: ${ret}`);
+	if (!readfile(`/sys/class/net/${name}/ifindex`)) {
+		let ret = phydev.wdev_add(name, wdev_config);
+		if (ret)
+			wpas.printf(`Failed to create device ${name}: ${ret}`);
+	}
 
 	let first_config = data.phy_config[radio];
 
@@ -195,7 +218,7 @@ function mld_add(data, phy_list)
 	if (!iface) {
 		wpas.printf(`Interface ${name} not found after adding\n`);
 		wpas.remove_iface(name);
-		wdev_remove(name);
+		wdev_set_down(name);
 		return;
 	}
 
