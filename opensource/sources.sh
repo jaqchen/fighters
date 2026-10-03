@@ -281,33 +281,52 @@ hostapd_config() {
 hostapd_build() {
 	local DESTDIR="${FSTAGING_DIR}${FTI_PREFIX}"
 	local DRIVER_ARGS="CONFIG_ACS=y CONFIG_DRIVER_NL80211=y CONFIG_UCODE=y CONFIG_APUP=y CONFIG_TLS=openssl CONFIG_SAE=y"
-	PKG_CONFIG_PATH="${DESTDIR}/lib/pkgconfig" make -C hostapd V=1 -j4 CONFIG_LIBNL_TINY=y \
-		CC=${FTC_CC} MULTICALL=1 PKG_CONFIG=pkg-config \
-		${DRIVER_ARGS} EXTRA_LDFLAGS="${FTC_LDFLAGS}" \
-		EXTRA_CFLAGS="-I${DESTDIR}/include/libnl-tiny" hostapd_multi.a
-	[ $? -ne 0 ] && return 1
+	local MAKEARGS="CC=${FTC_CC} MULTICALL=1 PKG_CONFIG=pkg-config \
+		CONFIG_LIBNL_TINY=y ${DRIVER_ARGS} \
+		EXTRA_LDFLAGS=${FTC_LDFLAGS} \
+		EXTRA_CFLAGS=-I${DESTDIR}/include/libnl-tiny"
+	local WPA_CFLAGS="${FTOPDIR}/opensource/hostapd/wpad_cflags.txt"
 
-	PKG_CONFIG_PATH="${DESTDIR}/lib/pkgconfig" make -C wpa_supplicant V=1 -j4 CONFIG_LIBNL_TINY=y \
-		CC=${FTC_CC} MULTICALL=1 PKG_CONFIG=pkg-config \
-		${DRIVER_ARGS} EXTRA_LDFLAGS="${FTC_LDFLAGS}" \
-		EXTRA_CFLAGS="-I${DESTDIR}/include/libnl-tiny" wpa_supplicant_multi.a
+	# The wpad multicall binary links objects from both the hostapd and the
+	# wpa_supplicant build. Build both with the combined CFLAGS of the two
+	# configurations, so that shared objects (e.g. driver_nl80211.o) get an
+	# identical ABI in both archives.
+	PKG_CONFIG_PATH="${DESTDIR}/lib/pkgconfig" \
+		make -C hostapd -s ${MAKEARGS} dump_cflags > "${WPA_CFLAGS}" && \
+	PKG_CONFIG_PATH="${DESTDIR}/lib/pkgconfig" \
+		make -C wpa_supplicant -s ${MAKEARGS} dump_cflags >> "${WPA_CFLAGS}"
+	[ $? -ne 0 ] && return 1
+	sed -i -e 's,-n ,,g' -e 's/"/\\"/g' "${WPA_CFLAGS}"
+
+	PKG_CONFIG_PATH="${DESTDIR}/lib/pkgconfig" make -C hostapd V=1 -j4 ${MAKEARGS} \
+		CFLAGS="$(cat ${WPA_CFLAGS})" hostapd_multi.a
 	[ $? -ne 0 ] && return 2
+
+	PKG_CONFIG_PATH="${DESTDIR}/lib/pkgconfig" make -C wpa_supplicant V=1 -j4 ${MAKEARGS} \
+		CFLAGS="$(cat ${WPA_CFLAGS})" wpa_supplicant_multi.a
+	[ $? -ne 0 ] && return 3
 
 	${FTC_CC} -DMULTICALL=1 -o wpad ../files-hostapd/multicall.c hostapd/hostapd_multi.a wpa_supplicant/wpa_supplicant_multi.a \
 		-lubox -lubus -lblobmsg_json -lucode -lm -lnl-tiny -ludebug ${FTC_LDFLAGS} -lcrypto -lssl
-	[ $? -ne 0 ] && return 3
+	[ $? -ne 0 ] && return 4
 
 	mkdir -p "${DESTDIR}/sbin"
+	rm -v -f ${DESTDIR}/sbin/{hostapd,wpa_supplicant}
 	cp -v -f wpad "${DESTDIR}/sbin/" && \
 		ln -sv -f wpad "${DESTDIR}/sbin/hostapd" && \
 		ln -sv -f wpad "${DESTDIR}/sbin/wpa_supplicant"
-	[ $? -ne 0 ] && return 4
+	[ $? -ne 0 ] && return 5
 
-	cd ../wifi-scripts || return 5
+	cd ../wifi-scripts || return 6
 	echo "Installing wifi-scripts to staging area ..."
 	cp -rf --preserve=mode -P files/* "${DESTDIR}/" && \
 		cp -rf --preserve=mode -P files-ucode/* "${DESTDIR}/"
-	return 0
+	[ $? -ne 0 ] && return 7
+
+	echo "Installing hostapd/wpa_supplicant ucode to staging area ..."
+	mkdir -p "${DESTDIR}/usr/share/hostap" && cp -v -f ../files-hostapd/hostapd.uc \
+		../files-hostapd/wpa_supplicant.uc "${DESTDIR}/usr/share/hostap/"
+	return $?
 }
 
 hostapd_clean() {
