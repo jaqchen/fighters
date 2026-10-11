@@ -377,26 +377,6 @@ netifd_compile() {
 	return $?
 }
 
-nftables_config() {
-	apply_patches ../patches-nftables
-	[ $? -ne 0 ] && return 1
-
-	PKG_CONFIG_PATH="${FSTAGING_DIR}/${FTI_PREFIX}/lib/pkgconfig" \
-	./configure --host=${FTC_HOST} --prefix=${FTI_PREFIX} CC=${FTC_CC} \
-		LDFLAGS="${FTC_LDFLAGS}" --enable-static=no --enable-shared=yes \
-		--disable-debug --disable-man-doc --with-mini-gmp --without-cli \
-		--disable-python
-	return $?
-}
-
-nftables_compile() {
-	make V=1 -j8
-	[ $? -ne 0 ] && return 1
-
-	make V=1 -j1 DESTDIR=${FSTAGING_DIR} install
-	return $?
-}
-
 libmnl_config() {
 	./configure --host=${FTC_HOST} --prefix=${FTI_PREFIX} CC=${FTC_CC} \
 		LDFLAGS="${FTC_LDFLAGS}" --enable-static=no --enable-shared=yes
@@ -404,6 +384,56 @@ libmnl_config() {
 }
 
 libmnl_compile() {
+	make V=1 -j8
+	[ $? -ne 0 ] && return 1
+
+	make V=1 -j1 DESTDIR=${FSTAGING_DIR} install
+	return $?
+}
+
+libnftnl_config() {
+	if [ ! -e "${TAG_PATCHED}" ] ; then
+		# ubuntu-24.04 does not have automake-1.17,
+		# so we need to invoke `autoreconf`:
+		autoreconf -i -f
+		[ $? -ne 0 ] && return 1
+	fi
+
+	apply_patches ../patches-libnftnl
+	[ $? -ne 0 ] && return 2
+
+	PKG_CONFIG_PATH="${FSTAGING_DIR}/${FTI_PREFIX}/lib/pkgconfig" \
+	./configure --host=${FTC_HOST} --prefix=${FTI_PREFIX} CC=${FTC_CC} \
+		LDFLAGS="${FTC_LDFLAGS}" --enable-static=no --enable-shared=yes
+	return $?
+}
+
+libnftnl_compile() {
+	make V=1 -j8
+	[ $? -ne 0 ] && return 1
+
+	make V=1 -j1 DESTDIR=${FSTAGING_DIR} install
+	return $?
+}
+
+nftables_config() {
+	if [ ! -e "${TAG_PATCHED}" ] ; then
+		autoreconf -i -f
+		[ $? -ne 0 ] && return 1
+	fi
+
+	apply_patches ../patches-nftables
+	[ $? -ne 0 ] && return 2
+
+	PKG_CONFIG_PATH="${FSTAGING_DIR}/${FTI_PREFIX}/lib/pkgconfig" \
+	./configure --host=${FTC_HOST} --prefix=${FTI_PREFIX} CC=${FTC_CC} \
+		LDFLAGS="${FTC_LDFLAGS}" --enable-static=no --enable-shared=yes \
+		--disable-debug --disable-man-doc --with-mini-gmp --without-cli \
+		--disable-python LIBS="-lnftnl"
+	return $?
+}
+
+nftables_compile() {
 	make V=1 -j8
 	[ $? -ne 0 ] && return 1
 
@@ -455,6 +485,9 @@ register_source "opensource/netifd" \
 
 register_source "libmnl-1.0.5.tar.bz2" \
 	libmnl_config libmnl_compile opensource_clean
+
+register_source "libnftnl-1.3.1.tar.xz" \
+	libnftnl_config libnftnl_compile opensource_clean
 
 register_source "nftables-1.1.6.tar.xz" \
 	nftables_config nftables_compile opensource_clean
