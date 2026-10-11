@@ -13,4 +13,5 @@
 /openssl-3.5.7
 /hostapd
 /netifd
+/libmnl-1.0.5
 /nftables-1.1.6

@@ -37,7 +37,7 @@ opensource_clean() {
 }
 
 opensource_build() {
-	make VERBOSE=1 -j4
+	make VERBOSE=1 -j8
 	[ $? -ne 0 ] && return 1
 
 	make VERBOSE=1 DESTDIR=${FSTAGING_DIR} -j1 install
@@ -381,6 +381,7 @@ nftables_config() {
 	apply_patches ../patches-nftables
 	[ $? -ne 0 ] && return 1
 
+	PKG_CONFIG_PATH="${FSTAGING_DIR}/${FTI_PREFIX}/lib/pkgconfig" \
 	./configure --host=${FTC_HOST} --prefix=${FTI_PREFIX} CC=${FTC_CC} \
 		LDFLAGS="${FTC_LDFLAGS}" --enable-static=no --enable-shared=yes \
 		--disable-debug --disable-man-doc --with-mini-gmp --without-cli \
@@ -392,7 +393,21 @@ nftables_compile() {
 	make V=1 -j8
 	[ $? -ne 0 ] && return 1
 
-	make V=1 -j1 install
+	make V=1 -j1 DESTDIR=${FSTAGING_DIR} install
+	return $?
+}
+
+libmnl_config() {
+	./configure --host=${FTC_HOST} --prefix=${FTI_PREFIX} CC=${FTC_CC} \
+		LDFLAGS="${FTC_LDFLAGS}" --enable-static=no --enable-shared=yes
+	return $?
+}
+
+libmnl_compile() {
+	make V=1 -j8
+	[ $? -ne 0 ] && return 1
+
+	make V=1 -j1 DESTDIR=${FSTAGING_DIR} install
 	return $?
 }
 
@@ -437,6 +452,9 @@ register_source "opensource/hostapd" \
 
 register_source "opensource/netifd" \
 	netifd_config netifd_compile opensource_clean
+
+register_source "libmnl-1.0.5.tar.bz2" \
+	libmnl_config libmnl_compile opensource_clean
 
 register_source "nftables-1.1.6.tar.xz" \
 	nftables_config nftables_compile opensource_clean
