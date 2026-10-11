@@ -377,6 +377,25 @@ netifd_compile() {
 	return $?
 }
 
+nftables_config() {
+	apply_patches ../patches-nftables
+	[ $? -ne 0 ] && return 1
+
+	./configure --host=${FTC_HOST} --prefix=${FTI_PREFIX} CC=${FTC_CC} \
+		LDFLAGS="${FTC_LDFLAGS}" --enable-static=no --enable-shared=yes \
+		--disable-debug --disable-man-doc --with-mini-gmp --without-cli \
+		--disable-python
+	return $?
+}
+
+nftables_compile() {
+	make V=1 -j8
+	[ $? -ne 0 ] && return 1
+
+	make V=1 -j1 install
+	return $?
+}
+
 register_source "lua-5.1.5.tar.gz" \
 	lua51_config lua51_compile lua51_clean
 
@@ -418,3 +437,6 @@ register_source "opensource/hostapd" \
 
 register_source "opensource/netifd" \
 	netifd_config netifd_compile opensource_clean
+
+register_source "nftables-1.1.6.tar.xz" \
+	nftables_config nftables_compile opensource_clean
