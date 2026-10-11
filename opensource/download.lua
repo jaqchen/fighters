@@ -33,6 +33,10 @@ local function fetch_pkgs()
 	npkg = npkg + 1
 	pkg_list[npkg] = { url = gfmt("%s/openssl-3.5.7.tar.gz", http or "https://github.com/openssl/openssl/releases/download/openssl-3.5.7"),
 		sha256sum = "a8c0d28a529ca480f9f36cf5792e2cd21984552a3c8e4aa11a24aa31aeac98e8", }
+
+	npkg = npkg + 1
+	pkg_list[npkg] = { url = gfmt("%s/nftables-1.1.6.tar.xz", http or "https://netfilter.org/projects/nftables/files"),
+		sha256sum = "372931bda8556b310636a2f9020adc710f9bab66f47efe0ce90bff800ac2530c", }
 end
 
 local function download_init(arg0)
