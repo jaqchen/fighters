@@ -37,6 +37,10 @@ local function fetch_pkgs()
 	npkg = npkg + 1
 	pkg_list[npkg] = { url = gfmt("%s/nftables-1.1.6.tar.xz", http or "https://netfilter.org/projects/nftables/files"),
 		sha256sum = "372931bda8556b310636a2f9020adc710f9bab66f47efe0ce90bff800ac2530c", }
+
+	npkg = npkg + 1
+	pkg_list[npkg] = { url = gfmt("%s/libmnl-1.0.5.tar.bz2", http or "https://www.netfilter.org/projects/libmnl/files"),
+		sha256sum = "274b9b919ef3152bfb3da3a13c950dd60d6e2bcd54230ffeca298d03b40d0525", }
 end
 
 local function download_init(arg0)
