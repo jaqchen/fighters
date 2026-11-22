@@ -10,7 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FT_PKGS += packages/lua5.4
 FT_PKGS += packages/cJSON
+FT_PKGS += packages/lua5.4
 FT_PKGS += packages/lua-cjson
-FT_PKGS += packages/lua-sysutil
+FT_PKGS += packages/sysutil
