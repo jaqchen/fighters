@@ -1,0 +1,7 @@
+*.o
+*.a
+*.so*
+/src/liblua.so
+/src/liblua.so.5.4
+/src/lua
+/src/luac
