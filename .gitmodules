@@ -1,0 +1,3 @@
+[submodule "packages/sysutil"]
+	path = packages/sysutil
+	url = https://github.com/jaqchen/sysutil.git
