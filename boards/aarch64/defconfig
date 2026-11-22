@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cp -fv ft-pkgs-cfg.mk ${FT_TOPDIR}/.pkgs-cfg.mk
+cp -fv ft-build-cfg.mk ${FT_TOPDIR}/.build-cfg.mk
+exit $?

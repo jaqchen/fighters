@@ -2,5 +2,7 @@
 *.o
 .*.swp
 /target
+/.pkgs-cfg.mk
+/.build-cfg.mk
 .tag-built
 .tag-configured
