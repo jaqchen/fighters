@@ -1,5 +1,6 @@
 #!/bin/sh
 
-cp -fv ft-pkgs-cfg.mk ${FT_TOPDIR}/.pkgs-cfg.mk
-cp -fv ft-build-cfg.mk ${FT_TOPDIR}/.build-cfg.mk
+rm -f ${FT_TOPDIR}/.pkgs-cfg.mk ${FT_TOPDIR}/.build-cfg.mk
+ln -sv "$(realpath ft-pkgs-cfg.mk)" ${FT_TOPDIR}/.pkgs-cfg.mk
+ln -sv "$(realpath ft-build-cfg.mk)" ${FT_TOPDIR}/.build-cfg.mk
 exit $?
