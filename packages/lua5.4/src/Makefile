@@ -4,15 +4,16 @@
 # == CHANGE THE SETTINGS BELOW TO SUIT YOUR ENVIRONMENT =======================
 
 # Your platform. See PLATS for possible values.
-PLAT= guess
+PLAT= linux
 
-CC= gcc -std=gnu99
-CFLAGS= -O2 -Wall -Wextra -DLUA_COMPAT_5_3 $(SYSCFLAGS) $(MYCFLAGS)
+CC ?= gcc
+CFLAGS = -std=gnu99 -fPIC -O2 -Wall -Wextra -DLUA_COMPAT_5_3 $(SYSCFLAGS) $(MYCFLAGS)
+CFLAGS +=$(if $(FT_PREFIX),'-DLUA_ROOT="$(FT_PREFIX)/"')
 LDFLAGS= $(SYSLDFLAGS) $(MYLDFLAGS)
 LIBS= -lm $(SYSLIBS) $(MYLIBS)
 
-AR= ar rcu
-RANLIB= ranlib
+AR= $(FT_CLPFX)ar rcu
+RANLIB= $(FT_CLPFX)ranlib
 RM= rm -f
 UNAME= uname
 
@@ -32,7 +33,7 @@ CMCFLAGS=
 
 PLATS= guess aix bsd c89 freebsd generic ios linux linux-readline macosx mingw posix solaris
 
-LUA_A=	liblua.a
+LUA_SO=	liblua.so.5.4
 CORE_O=	lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o llex.o lmem.o lobject.o lopcodes.o lparser.o lstate.o lstring.o ltable.o ltm.o lundump.o lvm.o lzio.o
 LIB_O=	lauxlib.o lbaselib.o lcorolib.o ldblib.o liolib.o lmathlib.o loadlib.o loslib.o lstrlib.o ltablib.o lutf8lib.o linit.o
 BASE_O= $(CORE_O) $(LIB_O) $(MYOBJS)
@@ -44,8 +45,8 @@ LUAC_T=	luac
 LUAC_O=	luac.o
 
 ALL_O= $(BASE_O) $(LUA_O) $(LUAC_O)
-ALL_T= $(LUA_A) $(LUA_T) $(LUAC_T)
-ALL_A= $(LUA_A)
+ALL_T= $(LUA_SO) $(LUA_T) $(LUAC_T)
+ALL_A= $(LUA_SO)
 
 # Targets start here.
 default: $(PLAT)
@@ -56,15 +57,15 @@ o:	$(ALL_O)
 
 a:	$(ALL_A)
 
-$(LUA_A): $(BASE_O)
-	$(AR) $@ $(BASE_O)
-	$(RANLIB) $@
+$(LUA_SO): $(BASE_O)
+	$(CC) -shared -o $@ $(BASE_O) "-Wl,-soname=$@" $(LDFLAGS) $(LIBS)
+	rm -rf liblua.so && ln -sv $@ liblua.so
 
-$(LUA_T): $(LUA_O) $(LUA_A)
-	$(CC) -o $@ $(LDFLAGS) $(LUA_O) $(LUA_A) $(LIBS)
+$(LUA_T): $(LUA_O) $(LUA_SO)
+	$(CC) -o $@ $(LDFLAGS) $(LUA_O) "-L$${PWD}" -llua $(LIBS) $(LDFLAGS)
 
-$(LUAC_T): $(LUAC_O) $(LUA_A)
-	$(CC) -o $@ $(LDFLAGS) $(LUAC_O) $(LUA_A) $(LIBS)
+$(LUAC_T): $(LUAC_O) $(LUA_SO)
+	$(CC) -o $@ $(LDFLAGS) $(LUAC_O) "-L$${PWD}" -llua $(LIBS) $(LDFLAGS)
 
 test:
 	./$(LUA_T) -v
