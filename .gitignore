@@ -4,5 +4,7 @@
 /target
 /.pkgs-cfg.mk
 /.build-cfg.mk
+.ft-compiled
+.ft-prepared
 .tag-built
 .tag-configured
